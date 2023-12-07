@@ -1,8 +1,8 @@
-{
+sysCtx @ {
   self,
   inputs,
   ...
-} @ sysCtx: {
+}: {
   imports = [
     /${self}/modules/arion.nix
   ];

@@ -17,10 +17,10 @@ in rec {
     (addSuffix "/default.nix")
     pathIsRegularFile
   ];
-  nixPackageDirectory = dir: (subpackagesOf dir) // (submodulesOf dir);
-  nixPackageContents = dir: ctx:
+  listAllSubmodules = dir: (subpackagesOf dir) // (submodulesOf dir);
+  importAllSubmodules = dir: ctx:
     pipe dir [
-      nixPackageDirectory
+      listAllSubmodules
       (mapValues (importWithContext ctx))
     ];
   runtimePath = hmConfig:

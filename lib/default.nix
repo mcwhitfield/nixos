@@ -1,8 +1,8 @@
-{
+ctx @ {
   self,
   inputs,
   ...
-} @ ctx: let
+}: let
   inherit (builtins) basename;
   inherit (inputs.nixpkgs.lib) path;
   inherit (inputs.nixpkgs.lib.attrsets) attrByPath;

@@ -1,26 +1,18 @@
-{
+flakeCtx @ {
   self,
-  hardware,
   inputs,
+  mkHomeNetworkSystem,
   ...
-} @ flakeCtx: let
-  systemModules = [./configuration.nix hardware.framework16];
+}: let
+  firstPartyModules = with self.nixosModules; [
+    hardware.framework16
+    ./configuration.nix
+
+    toolchains
+    vaultwarden
+  ];
   thirdPartyModules = with inputs; [
-    agenix.nixosModules.default
     fps.nixosModules.programs-sqlite
   ];
-  firstPartyModules = with self.nixosModules;
-    [
-      common
-      toolchains
-      vaultwarden
-      secrets
-    ]
-    ++ [
-      users.mark
-    ];
 in
-  inputs.nixpkgs.lib.nixosSystem rec {
-    specialArgs = flakeCtx;
-    modules = systemModules ++ thirdPartyModules ++ firstPartyModules;
-  }
+  mkHomeNetworkSystem {modules = firstPartyModules ++ thirdPartyModules;}

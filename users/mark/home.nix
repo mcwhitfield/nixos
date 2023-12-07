@@ -1,32 +1,23 @@
 userCtx @ {
   self,
-  config,
-  lib,
-  pkgs,
   user,
   network,
   ...
-}:
-with lib; let
+}: let
   homeDir = "/home/${user}";
-  modules = builtins.attrValues (import ./modules userCtx);
+  modules = import ./modules userCtx;
 in {
-  imports = modules;
+  imports = builtins.attrValues modules;
 
   config = {
     accounts.email.accounts.mark = {
-      address = "${user}@${network.domain}";
+      address = "${user}@${network.networking.domain}";
       primary = true;
     };
     home = {
       username = user;
       homeDirectory = homeDir;
       stateVersion = "23.11";
-
-      sessionVariables = {
-        NIX_ROOT = "${self}";
-	FOO = "bar";
-      };
     };
 
     programs.bash.enable = true;

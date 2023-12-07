@@ -1,2 +1,2 @@
-{lib, ...} @ flakeCtx:
-lib.flakes.nixPackageDirectory ./.
+flakeCtx @ {self, ...}:
+self.lib.flakes.listAllSubmodules ./.

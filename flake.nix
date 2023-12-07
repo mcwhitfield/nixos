@@ -37,32 +37,31 @@
     };
   };
 
-  outputs = {self, ...} @ flakes: let
+  outputs = flakes @ {self, ...}: let
     context = rec {
       inherit self;
-      nixosRoot = "/etc/nixos";
-      secrets = ./secrets;
       inputs =
         builtins.removeAttrs flakes ["self"]
         // import ./inputs/dockerhub.nix context;
-      lib = import ./lib context;
-      networks = import ./networks context;
-      network = networks.home;
-      modules = import ./modules context;
-      hardware = import ./hardware context;
-      userModules = import ./user-modules context;
-      users = import ./users context;
-      systems = import ./systems context;
-      homeConfigurations = users.homeConfigurations;
-    };
-    extraModules = with context; {
-      inherit secrets hardware;
-      users = users.nixosModules;
+      network = import ./networks/home.nix context;
+      nixosRoot = "/etc/nixos";
+      secrets = ./secrets;
     };
   in
-    with context; {
-      inherit lib networks homeConfigurations;
-      nixosModules = modules // extraModules;
+    with context; rec {
+      hardware = import ./hardware context;
+      homeModules = import ./modules/home-manager context;
+      homeConfigurations = users.homeConfigurations;
+      lib = import ./lib context;
+      networks = import ./networks context;
+      nixosModules =
+        import ./modules/nixos context
+        // {
+          inherit secrets hardware networks;
+          users = users.nixosModules;
+        };
       nixosConfigurations = systems;
+      systems = import ./systems context;
+      users = import ./users context;
     };
 }

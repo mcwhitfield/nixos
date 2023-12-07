@@ -1,2 +1,2 @@
-{lib, ...} @ flakeCtx:
-lib.flakes.nixPackageContents ./. flakeCtx
+flakeCtx @ {self, ...}:
+self.lib.flakes.importAllSubmodules ./. flakeCtx

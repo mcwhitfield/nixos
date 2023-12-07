@@ -1,4 +1,4 @@
-{pkgs, ...} @ sysCtx: {
+sysCtx @ {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
     gcc
     libcxx

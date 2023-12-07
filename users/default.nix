@@ -1,10 +1,10 @@
-{
+flakeCtx @ {
+  self,
   inputs,
   secrets,
-  userModules,
-  lib,
   ...
-} @ flakeCtx: let
+}: let
+  inherit (self) lib;
   inherit (builtins) mapAttrs attrValues removeAttrs;
   inherit (lib) homeManagerConfiguration;
   inherit (lib.flakes) subpackagesOf;
@@ -18,7 +18,7 @@
       modules = [
         inputs.agenix.homeManagerModules.age
         secrets
-        userModules.common
+        self.homeModules.common
         /${path}/home.nix
       ];
     };
