@@ -17,6 +17,12 @@
       url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ezConfigs = {
+      url = "github:ehllie/ez-configs";
+    };
+    flakeParts = {
+      url = "github:hercules-ci/flake-parts";
+    };
     fps = {
       url = "github:wamserma/flake-programs-sqlite";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,10 +32,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-23.11";
+      url = "github:nixos/nixpkgs/nixos-23.11";
     };
     nur = {
-      url = "github:nix-community/NUR";
+      url = "github:nix-community/nur";
     };
     "fishPlugins.tide" = {
       url = "github:IlanCosman/tide/v6.0.1";
@@ -37,31 +43,68 @@
     };
   };
 
-  outputs = flakes @ {self, ...}: let
-    context = rec {
-      inherit self;
-      inputs =
-        builtins.removeAttrs flakes ["self"]
-        // import ./inputs/dockerhub.nix context;
-      network = import ./networks/home.nix context;
-      nixosRoot = "/etc/nixos";
-      secrets = ./secrets;
-    };
+  outputs = inputs @ {
+    self,
+    agenix,
+    ezConfigs,
+    flakeParts,
+    nixpkgs,
+    nur,
+    ...
+  }: let
+    constants = import ./inputs/constants.nix;
+    dockerhub = import ./inputs/dockerhub.nix;
+    ctx = inputs // constants // dockerhub;
   in
-    with context; rec {
-      hardware = import ./hardware context;
-      homeModules = import ./modules/home-manager context;
-      homeConfigurations = users.homeConfigurations;
-      lib = import ./lib context;
-      networks = import ./networks context;
-      nixosModules =
-        import ./modules/nixos context
-        // {
-          inherit secrets hardware networks;
-          users = users.nixosModules;
+    flakeParts.lib.mkFlake {inherit inputs;} {
+      imports = [
+        ezConfigs.flakeModule
+        ./lib
+      ];
+
+      systems = [
+        "x86_64-linux"
+      ];
+
+      ezConfigs = {
+        root = ./.;
+        globalArgs = ctx;
+        home = {
+          configurationsDirectory = ./users;
+          modulesDirectory = ./modules/home-manager;
         };
-      nixosConfigurations = systems;
-      systems = import ./systems context;
-      users = import ./users context;
+        nixos = {
+          configurationsDirectory = ./hosts;
+          modulesDirectory = ./modules/nixos;
+        }; #
+      };
+
+      flake = {
+        nixosModules.secrets = ./secrets/nixos.nix;
+        homeManagerModules.secrets = ./secrets/home-manager.nix;
+      };
+
+      perSystem = {
+        pkgs,
+        lib,
+        system,
+        ...
+      }: {
+        _module.args.pkgs = import nixpkgs {
+          inherit system;
+          overlays = [agenix.overlay nur.overlay];
+        };
+        devShells.default = pkgs.mkShell {
+          name = "default-shell";
+          packages = lib.attrValues {
+            inherit
+              (pkgs)
+              age
+              nixos-rebuild
+              ssh-to-age
+              ;
+          };
+        };
+      };
     };
 }

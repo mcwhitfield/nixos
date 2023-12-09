@@ -28,8 +28,10 @@ in {
       fzf
       lazygit
       lua-language-server
+      nil
       nixd
       ripgrep
+      rnix-lsp
       tree-sitter
       wl-clipboard
     ])

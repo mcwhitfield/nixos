@@ -1,5 +1,5 @@
 {lib, ...}: let
-  inherit (builtins) head replaceStrings split substring;
+  inherit (builtins) filter head split substring typeOf;
   inherit (lib.strings) concatStringsSep toLower toUpper;
   inherit (lib.trivial) compose;
   inherit (lib.types) typeof;
@@ -16,4 +16,5 @@ in rec {
       ))
       (concatStringsSep "")
     ];
+  splitString = sep: s: filter (e: typeOf e == "string") (split "(${sep})" s);
 }

@@ -1,3 +1,0 @@
-{...}: {
-  networking.domain = "TBD.com";
-}

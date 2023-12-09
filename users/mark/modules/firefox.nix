@@ -1,11 +1,4 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
-  imports = [
-    {nixpkgs.overlays = [inputs.nur.overlay];}
-  ];
+{pkgs, ...}: {
   config = {
     programs.firefox = {
       enable = true;

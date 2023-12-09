@@ -1,4 +1,3 @@
-{...}:
 # dockerhub input type when
 {
   dockerhub = {
