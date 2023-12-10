@@ -1,11 +1,4 @@
-{
-  self,
-  config,
-  pkgs,
-  ...
-}: let
-  inherit (self.lib.flakes) runtimePath;
-in {
+{pkgs, ...}: {
   programs.neovim = {
     enable = true;
     defaultEditor = true;
@@ -19,7 +12,7 @@ in {
   };
 
   # _lua instead of lua so Telescope doesn't think ./lua is a project root.
-  xdg.configFile."nvim/lua".source = runtimePath config ./_lua;
+  xdg.configFile."nvim/lua".source = ./_lua;
 
   home.packages =
     (with pkgs; [

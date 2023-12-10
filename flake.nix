@@ -31,14 +31,25 @@
       url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+    };
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-23.11";
     };
     nur = {
       url = "github:nix-community/nur";
     };
-    "fishPlugins.tide" = {
+    fishPlugins-tide = {
       url = "github:IlanCosman/tide/v6.0.1";
+      flake = false;
+    };
+    rustOverlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    wezterm = {
+      url = "github:wez/wezterm?submodules=1";
       flake = false;
     };
   };
@@ -50,6 +61,7 @@
     flakeParts,
     nixpkgs,
     nur,
+    rustOverlay,
     ...
   }: let
     constants = import ./inputs/constants.nix;
@@ -92,16 +104,16 @@
       }: {
         _module.args.pkgs = import nixpkgs {
           inherit system;
-          overlays = [agenix.overlay nur.overlay];
+          overlays = [agenix.overlays.default];
         };
         devShells.default = pkgs.mkShell {
           name = "default-shell";
           packages = lib.attrValues {
             inherit
               (pkgs)
-              age
+              agenix
+              home-manager
               nixos-rebuild
-              ssh-to-age
               ;
           };
         };

@@ -6,6 +6,7 @@
   imports = with self.nixosModules; [
     framework16
     gnome
+    hyprland
     vaultwarden
   ];
 

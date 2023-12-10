@@ -3,6 +3,7 @@ local wezterm = require 'wezterm'
 return {
   color_scheme = 'tokyonight',
   default_prog = { 'fish' },
+  enable_tab_bar = false,
   font = wezterm.font 'Fira Code',
   harfbuzz_features = {
     'cv01', -- 'a'

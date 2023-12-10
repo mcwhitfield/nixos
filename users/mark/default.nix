@@ -1,20 +1,32 @@
 {
   self,
-  user,
-  nixRoot,
+  pkgs,
+  config,
+  nixosRoot,
   osConfig,
   ...
 }: let
+  inherit (builtins) filter;
   inherit (self.lib.filesystem) listFilesRecursive;
+  inherit (self.lib.strings) hasSuffix;
+  inherit (config.lib.file) mkOutOfStoreSymlink;
+  user = "mark";
   homeDir = "/home/${user}";
+  userConfigs = filter (hasSuffix ".nix") (listFilesRecursive ./modules);
+
+  linkConfigToDotConfig = subpath: {
+    ".config/${subpath}".source =
+      mkOutOfStoreSymlink /${config.xdg.configHome}/${subpath};
+  };
 in {
-  imports = with self.homeManagerModules;
-    listFilesRecursive ./modules
+  imports = with self.homeModules;
+    userConfigs
     ++ [
       firacode
     ];
 
   config = {
+    _module.args.user = user;
     accounts.email.accounts.${user} = {
       address = "${user}@${osConfig.networking.domain}";
       primary = true;
@@ -23,6 +35,15 @@ in {
       username = user;
       homeDirectory = homeDir;
       stateVersion = "23.11";
+      packages = with pkgs; [
+        dolphin
+      ];
+      file =
+        linkConfigToDotConfig "hypr/hyprland.conf"
+        // linkConfigToDotConfig "environment.d";
+      keyboard.options = [
+        "caps:escape"
+      ];
     };
     xdg = {
       enable = true;
@@ -44,7 +65,7 @@ in {
         videos = /${homeDir}/videos;
       };
 
-      configFile.home-manager.source = nixRoot;
+      configFile.home-manager.source = config.lib.file.mkOutOfStoreSymlink nixosRoot;
     };
   };
 }

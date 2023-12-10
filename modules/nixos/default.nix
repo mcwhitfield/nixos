@@ -4,16 +4,16 @@
   pkgs,
   domain,
   nixosRoot,
+  nur,
+  rustOverlay,
   ...
 }: let
-  inherit (builtins) attrValues;
-  inherit (self) lib nixosModules inputs;
-  inherit (lib.attrsets) catAttrs mapValues;
+  inherit (self) lib nixosModules;
+  inherit (lib.attrsets) mapValues;
 in {
   imports = with nixosModules; [
-    {nixpkgs.overlays = catAttrs "overlay" (attrValues inputs);}
+    {nixpkgs.overlays = [nur.overlay rustOverlay.overlays.default];}
     secrets
-    toolchains
   ];
 
   config = {
@@ -21,6 +21,10 @@ in {
       efi.canTouchEfiVariables = true;
       systemd-boot.enable = true;
     };
+
+    environment.systemPackages = with pkgs; [
+      (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
+    ];
 
     i18n = {
       defaultLocale = "en_US.UTF-8";
@@ -46,7 +50,10 @@ in {
       '';
       package = pkgs.nixFlakes;
       registry = let
-        flakeToEntry = input: {to.flake = input;};
+        flakeToEntry = input: {
+          to.path = input;
+          to.type = "path";
+        };
         selfEntry = {
           nixos.to.type = "path";
           nixos.to.path = nixosRoot;

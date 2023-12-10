@@ -1,7 +1,7 @@
 {
   self,
+  inputs,
   lib,
-  nixosRoot,
   ...
 }: let
   inherit (builtins) filter toString;
@@ -31,7 +31,7 @@ in rec {
     compose [
       toString
       (strings.removePrefix "${self}")
-      (addPrefix nixosRoot)
+      (addPrefix inputs.nixosRoot)
       hmConfig.lib.file.mkOutOfStoreSymlink
     ];
 }
