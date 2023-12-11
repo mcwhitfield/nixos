@@ -31,6 +31,6 @@ return {
     'ss09', -- '>>= <<= ||= |='
     'zero', -- '0'
   },
-  hide_mouse_cursor_when_typing = false,
-  window_background_opacity = 0.95,
+  hide_mouse_cursor_when_typing = true,
+  window_background_opacity = 0.92,
 }

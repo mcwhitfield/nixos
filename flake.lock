@@ -444,6 +444,7 @@
         "nixpkgs": "nixpkgs_3",
         "nur": "nur",
         "rustOverlay": "rustOverlay",
+        "wallpapers": "wallpapers",
         "wezterm": "wezterm"
       }
     },
@@ -510,6 +511,22 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "wallpapers": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1682576461,
+        "narHash": "sha256-++Qwul3NZE47HbELWHhQUpFTTpUvVX3FxjfnMkrbOXU=",
+        "owner": "makccr",
+        "repo": "wallpapers",
+        "rev": "4f9782c946eacc910eb8bbabe2325cb9ea4e9c98",
+        "type": "github"
+      },
+      "original": {
+        "owner": "makccr",
+        "repo": "wallpapers",
         "type": "github"
       }
     },

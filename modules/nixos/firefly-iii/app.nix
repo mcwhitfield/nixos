@@ -1,4 +1,4 @@
-{ network, ... }: {
+{...}: {
   # You can leave this on "local". If you change it to production most console
   # commands will ask for extra confirmation. Never set it to "testing".
   APP_ENV = "local";
@@ -140,14 +140,14 @@
 
   # always use quotes and make sure redis db "0" and "1" exists. Otherwise
   # change accordingly.
-  REDIS_DB = ""0"";
-  REDIS_CACHE_DB = ""1"";
+  REDIS_DB = "0";
+  REDIS_CACHE_DB = "1";
 
   # Cookie settings. Should not be necessary to change these. If you use Docker
   # or similar, you can set COOKIE_DOMAIN_FILE to set the value from a file
   # instead of from an environment variable Setting samesite to "strict" may
   # give you trouble logging in.
-  COOKIE_PATH = ""/"";
+  COOKIE_PATH = "/";
   COOKIE_DOMAIN = "";
   COOKIE_SECURE = "false";
   COOKIE_SAMESITE = "lax";
@@ -220,7 +220,7 @@
   #
   # Firefly III supports a few authentication methods: - 'web' (default, uses
   # built in DB) - 'remote_user_guard' for Authelia etc Read more about these
-  # settings in the documentation. 
+  # settings in the documentation.
   # https://docs.firefly-iii.org/firefly-iii/advanced-installation/authentication
   #
   # LDAP is no longer supported
@@ -263,7 +263,7 @@
 
   # If you wish to track your own behavior over Firefly III, set valid analytics
   # tracker information here. Nobody uses this except for me on the demo site.
-  # But hey, feel free to use this if you want to. Do not prepend the TRACKER_URL 
+  # But hey, feel free to use this if you want to. Do not prepend the TRACKER_URL
   # with http:// or https:// The only tracker supported is Matomo. You can set
   # the following variables from a file by appending them with _FILE:
   TRACKER_SITE_ID = "";

@@ -23,6 +23,7 @@ in {
     ])
     xdg-desktop-portal-hyprland
   ]);
+  programs.swaylock.enable = true;
   services.dunst = {
     enable = true;
   };

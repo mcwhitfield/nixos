@@ -48,6 +48,10 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    wallpapers = {
+      url = "github:makccr/wallpapers";
+      flake = false;
+    };
     wezterm = {
       url = "github:wez/wezterm?submodules=1";
       flake = false;
@@ -108,14 +112,11 @@
         };
         devShells.default = pkgs.mkShell {
           name = "default-shell";
-          packages = lib.attrValues {
-            inherit
-              (pkgs)
-              agenix
-              home-manager
-              nixos-rebuild
-              ;
-          };
+          packages = with pkgs; [
+            pkgs.agenix
+            home-manager
+            nixos-rebuild
+          ];
         };
       };
     };

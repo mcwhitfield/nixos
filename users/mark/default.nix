@@ -4,6 +4,7 @@
   config,
   nixosRoot,
   osConfig,
+  wallpapers,
   ...
 }: let
   inherit (builtins) filter;
@@ -13,11 +14,6 @@
   user = "mark";
   homeDir = "/home/${user}";
   userConfigs = filter (hasSuffix ".nix") (listFilesRecursive ./modules);
-
-  linkConfigToDotConfig = subpath: {
-    ".config/${subpath}".source =
-      mkOutOfStoreSymlink /${config.xdg.configHome}/${subpath};
-  };
 in {
   imports = with self.homeModules;
     userConfigs
@@ -38,12 +34,19 @@ in {
       packages = with pkgs; [
         dolphin
       ];
-      file =
-        linkConfigToDotConfig "hypr/hyprland.conf"
-        // linkConfigToDotConfig "environment.d";
+      file.".config".source = mkOutOfStoreSymlink "/${config.xdg.configHome}";
       keyboard.options = [
         "caps:escape"
       ];
+    };
+    programs.wpaperd = {
+      enable = true;
+      settings = {
+        default = {
+          path = "${wallpapers}/wallpapers/";
+          duration = "30m";
+        };
+      };
     };
     xdg = {
       enable = true;

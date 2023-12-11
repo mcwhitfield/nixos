@@ -3,6 +3,7 @@
   config,
   pkgs,
   domain,
+  fps,
   nixosRoot,
   nur,
   rustOverlay,
@@ -13,6 +14,7 @@
 in {
   imports = with nixosModules; [
     {nixpkgs.overlays = [nur.overlay rustOverlay.overlays.default];}
+    fps.nixosModules.programs-sqlite
     secrets
   ];
 
@@ -21,10 +23,6 @@ in {
       efi.canTouchEfiVariables = true;
       systemd-boot.enable = true;
     };
-
-    environment.systemPackages = with pkgs; [
-      (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
-    ];
 
     i18n = {
       defaultLocale = "en_US.UTF-8";
@@ -74,7 +72,7 @@ in {
       mark = {
         hashedPasswordFile = config.age.secrets."mark-password".path;
         isNormalUser = true;
-        extraGroups = ["wheel" "networkmanager"];
+        extraGroups = ["wheel" "networkmanager" "podman"];
       };
     };
   };
