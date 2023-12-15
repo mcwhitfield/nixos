@@ -1,23 +1,33 @@
-inputs @ {nixosRoot, ...}: {
+{
+  self,
+  config,
+  ...
+}: let
+  inherit (builtins) attrValues concatStringsSep;
+  inherit (self.lib.attrsets) mapAttrs';
+  inherit (self.lib.trivial) pipe;
+  envVars = pipe config.home.sessionVariables [
+    mapAttrs'
+    (k: v: "set -g ${k} \"${v}\"")
+    attrValues
+    (concatStringsSep "\n")
+  ];
+in {
   programs.fish = {
     enable = true;
-    plugins = [
-      {
-        name = "tide";
-        src = inputs.fishPlugins-tide;
-      }
-    ];
-    interactiveShellInit = builtins.readFile ./tide_config.fish;
+    interactiveShellInit = envVars;
     shellAliases = {
-      nixos-rebuild = "sudo nixos-rebuild --flake ${nixosRoot}";
-      home-manager = "command home-manager --flake ${nixosRoot}";
       hms = "home-manager switch";
       nhs = "home-manager switch";
       nrs = "nixos-rebuild switch";
-      flake = "fish -c 'cd ${nixosRoot} && $EDITOR'";
     };
 
     functions = {
+      fish_command_not_found = {
+        body = ''
+          nix run nixpkgs#$argv[1] -- $argv[2..-1]
+        '';
+      };
       flake_path = {
         argumentNames = ["flake"];
         # description = builtins.concatStringsSep " " [

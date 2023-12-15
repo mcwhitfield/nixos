@@ -44,6 +44,7 @@
           decentraleyes
           privacy-badger
           ublock-origin
+          vimium
         ];
 
         id = 0;

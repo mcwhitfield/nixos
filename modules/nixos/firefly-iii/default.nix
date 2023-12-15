@@ -22,7 +22,7 @@ inputs @ {
       };
       services = {
         app.service = {
-          image = "fireflyiii/core:${fireflyiii.core.latest}";
+          image = "fireflyiii/core@${fireflyiii.core.latest}";
           hostname = "app";
           container_name = "firefly_iii_core";
           restart = "always";
@@ -33,7 +33,7 @@ inputs @ {
           depends_on = ["db"];
         };
         db.service = {
-          image = "mariadb:${_.mariadb.latest}";
+          image = "mariadb@${_.mariadb.latest}";
           hostname = "db";
           container_name = "firefly_iii_db";
           restart = "always";
@@ -42,7 +42,7 @@ inputs @ {
           volumes = ["firefly_iii_db:/var/lib/mysql"];
         };
         importer.service = {
-          image = "fireflyiii/data-importer:${fireflyiii.data-importer.latest}";
+          image = "fireflyiii/data-importer@${fireflyiii.data-importer.latest}";
           hostname = "importer";
           restart = "always";
           container_name = "firefly_iii_importer";
@@ -52,7 +52,7 @@ inputs @ {
           environment = import ./db.nix inputs;
         };
         cron.service = {
-          image = "alpine:${_.alpine.latest}";
+          image = "alpine@${_.alpine.latest}";
           restart = "always";
           container_name = "firefly_iii_cron";
           command = "sh -c \"echo \\\"0 3 * * * wget -qO- http://app:8080/api/v1/cron/REPLACEME\\\" | crontab - && crond -f -L /dev/stdout\"";

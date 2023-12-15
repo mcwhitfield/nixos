@@ -1,14 +1,50 @@
 let
-  inherit (builtins) attrValues;
-  systems = {
-    turvy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGKPRQPEh/V/ughlQqpiyBQSq7ERnW1yrPmk987ruRGN";
-  };
-  users = {
-    mark = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBGE/eUXX4kr+hhZWBT5MEpJKt2oed9Fg3+EWEB10+ev";
-  };
-  keys = systems // users;
-in {
-  "secrets/firefly-iii".publicKeys = keys;
-  "secrets/mark-ssh-0".publicKeys = attrValues systems ++ [users.mark];
-  "secrets/mark-password".publicKeys = attrValues systems ++ [users.mark];
-}
+  # All the below is just to automatically assign owners to ssh keys with a naming scheme like:
+  # ./ssh-user-label => {user = {label = <pubKey>}}
+  # Pure eval in this file, so gotta do it by hand.
+  inherit (builtins) attrNames attrValues baseNameOf concatLists elemAt filter groupBy map;
+  inherit (builtins) listToAttrs mapAttrs match readDir readFile replaceStrings;
+
+  secretsFiles = attrNames (readDir ./secrets);
+  secretsMatching = patt: let
+    tries = map (f: match patt (baseNameOf f)) secretsFiles;
+  in
+    filter (gs: !(isNull gs)) tries;
+
+  pubkeyMatches = secretsMatching "ssh-([^-]*)-(.*)\.pub";
+  userOrHost = groups: elemAt groups 0;
+  label = groups: elemAt groups 1;
+  readKey = groups: let
+    content = readFile ./secrets/ssh-${userOrHost groups}-${label groups}.pub;
+  in
+    replaceStrings ["\n"] [""] content;
+  perOwner = groupBy userOrHost pubkeyMatches;
+  keys = mapAttrs (_: groups: map readKey groups) perOwner;
+
+  hosts = {inherit (keys) turvy;};
+  allHosts = concatLists (attrValues hosts);
+  users = {inherit (keys) mark;};
+  allUsers = concatLists (attrValues users);
+  allKeys = allHosts ++ allUsers;
+
+  privKeys = let
+    matches = secretsMatching "ssh-([^-]*)-([^-.]*)";
+    mkKv = groups: let
+      owner = userOrHost groups;
+      ownerKeys = keys.${owner};
+      otherKeys =
+        if users ? ${owner}
+        then allHosts
+        else allUsers;
+    in {
+      name = "secrets/ssh-${owner}-${label groups}";
+      value = {publicKeys = ownerKeys ++ otherKeys;};
+    };
+  in
+    listToAttrs (map mkKv matches);
+in
+  privKeys
+  // {
+    "secrets/firefly-iii".publicKeys = allKeys;
+    "secrets/mark-password".publicKeys = allHosts ++ users.mark;
+  }

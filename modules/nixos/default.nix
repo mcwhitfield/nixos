@@ -7,6 +7,8 @@
   nixosRoot,
   nur,
   rustOverlay,
+  impermanence,
+  nixosGenerators,
   ...
 }: let
   inherit (self) lib nixosModules;
@@ -15,6 +17,8 @@ in {
   imports = with nixosModules; [
     {nixpkgs.overlays = [nur.overlay rustOverlay.overlays.default];}
     fps.nixosModules.programs-sqlite
+    impermanence.nixosModules.impermanence
+    nixosGenerators.nixosModules.all-formats
     secrets
   ];
 
@@ -22,6 +26,21 @@ in {
     boot.loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot.enable = true;
+    };
+    boot.supportedFilesystems = ["zfs"];
+
+    environment.persistence."/persistent/${config.networking.hostName}" = {
+      directories = [
+        "/var/log"
+        "/var/lib/bluetooth"
+        "/var/lib/nixos"
+        "/var/lib/systemd/coredump"
+        "/etc/NetworkManager/system-connections"
+        "/etc/nixos"
+      ];
+      files = [
+        "/etc/machine-id"
+      ];
     };
 
     i18n = {
@@ -61,6 +80,8 @@ in {
     };
 
     nixpkgs.config.allowUnfree = false;
+
+    programs.fuse.userAllowOther = true;
 
     services.sshd.enable = true;
 

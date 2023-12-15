@@ -4,7 +4,7 @@
   config,
   nixosRoot,
   osConfig,
-  wallpapers,
+  impermanence,
   ...
 }: let
   inherit (builtins) filter;
@@ -13,16 +13,20 @@
   inherit (config.lib.file) mkOutOfStoreSymlink;
   user = "mark";
   homeDir = "/home/${user}";
+  persistenceDir = "/persistent${homeDir}";
   userConfigs = filter (hasSuffix ".nix") (listFilesRecursive ./modules);
 in {
   imports = with self.homeModules;
     userConfigs
     ++ [
       firacode
+      impermanence.nixosModules.home-manager.impermanence
     ];
 
   config = {
-    _module.args.user = user;
+    _module.args = {
+      inherit user persistenceDir;
+    };
     accounts.email.accounts.${user} = {
       address = "${user}@${osConfig.networking.domain}";
       primary = true;
@@ -33,19 +37,33 @@ in {
       stateVersion = "23.11";
       packages = with pkgs; [
         dolphin
+        nix-output-monitor
       ];
       file.".config".source = mkOutOfStoreSymlink "/${config.xdg.configHome}";
       keyboard.options = [
         "caps:escape"
       ];
-    };
-    programs.wpaperd = {
-      enable = true;
-      settings = {
-        default = {
-          path = "${wallpapers}/wallpapers/";
-          duration = "30m";
-        };
+      sessionVariables = {
+        DIRENV_LOG_FORMAT = "\"\"";
+      };
+      persistence.${persistenceDir} = {
+        directories = with config.xdg;
+          (with userDirs; [
+            desktop
+            documents
+            download
+            music
+            pictures
+            publicShare
+            templates
+            videos
+          ])
+          ++ [
+            ".gnupg"
+            ".ssh"
+            /${dataHome}/keyrings
+          ];
+        allowOther = true;
       };
     };
     xdg = {
@@ -54,6 +72,7 @@ in {
       cacheHome = /${homeDir}/cache;
       dataHome = /${homeDir}/data;
       stateHome = /${homeDir}/state;
+      #
       userDirs = {
         enable = true;
         createDirectories = true;

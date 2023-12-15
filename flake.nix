@@ -17,33 +17,29 @@
       url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    ezConfigs = {
-      url = "github:ehllie/ez-configs";
+    ezConfigs.url = "github:ehllie/ez-configs";
+    firefly-iii.url = "path:/home/mark/public/firefly-iii";
+    fishPlugins-tide = {
+      url = "github:IlanCosman/tide/v6.0.1";
+      flake = false;
     };
-    flakeParts = {
-      url = "github:hercules-ci/flake-parts";
-    };
+    flakeParts.url = "github:hercules-ci/flake-parts";
     fps = {
       url = "github:wamserma/flake-programs-sqlite";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.11";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
+    hyprland.url = "github:hyprwm/Hyprland";
+    impermanence.url = "github:nix-community/impermanence";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixosGenerators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-23.11";
-    };
-    nur = {
-      url = "github:nix-community/nur";
-    };
-    fishPlugins-tide = {
-      url = "github:IlanCosman/tide/v6.0.1";
-      flake = false;
-    };
+    nur.url = "github:nix-community/nur";
     rustOverlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -101,6 +97,7 @@
       };
 
       perSystem = {
+        config,
         pkgs,
         lib,
         system,
@@ -111,7 +108,7 @@
           overlays = [agenix.overlays.default];
         };
         devShells.default = pkgs.mkShell {
-          name = "default-shell";
+          name = "dev";
           packages = with pkgs; [
             pkgs.agenix
             home-manager
