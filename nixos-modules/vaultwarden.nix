@@ -1,5 +1,5 @@
 {config, ...}: {
-  environment.persistence."/persistent/${config.networking.hostName}".directories = [
+  environment.persistence."/persist".directories = [
     "/var/lib/bitwarden_rs"
   ];
   services.vaultwarden = {

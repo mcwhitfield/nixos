@@ -4,11 +4,11 @@
   ...
 }: let
   inherit (builtins) attrValues concatStringsSep;
-  inherit (self.lib.attrsets) mapAttrs';
+  inherit (self.lib.attrsets) mapAttrs;
   inherit (self.lib.trivial) pipe;
   envVars = pipe config.home.sessionVariables [
-    mapAttrs'
-    (k: v: "set -g ${k} \"${v}\"")
+    (mapAttrs
+    (k: v: "set -g ${k} \"${v}\""))
     attrValues
     (concatStringsSep "\n")
   ];

@@ -28,8 +28,9 @@ in {
       systemd-boot.enable = true;
     };
     boot.supportedFilesystems = ["zfs"];
+    boot.tmp.useTmpfs = true;
 
-    environment.persistence."/persistent/${config.networking.hostName}" = {
+    environment.persistence."/persist" = {
       directories = [
         "/var/log"
         "/var/lib/bluetooth"
@@ -84,14 +85,19 @@ in {
     programs.fuse.userAllowOther = true;
 
     services.sshd.enable = true;
+    systemd.services.agenix.after = [
+      "basic.target"
+    ];
 
     system.stateVersion = "23.11";
 
     time.timeZone = "America/New_York";
 
+    users.mutableUsers = false;
     users.users = {
       mark = {
-        hashedPasswordFile = config.age.secrets."mark-password".path;
+        uid = 1000;
+        initialHashedPassword = "$6$x4Czbd9boWzFUySX$pgTJ6Twtm4l98ho8my945FtF4SYwYe.fbJqbfPzm7SqIPW/lxts400f2dgvYr4Z5ahDA866TvtLxLNlqPt7sY.";
         isNormalUser = true;
         extraGroups = ["wheel" "networkmanager" "podman"];
       };

@@ -5,7 +5,7 @@
 }: {
   imports = [
     hyprland.nixosModules.default
-    self.nixosModules.desktopEnvironment
+    ./desktopEnvironment.nix
   ];
 
   programs.hyprland = {

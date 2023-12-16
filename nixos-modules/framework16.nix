@@ -4,7 +4,6 @@
 {
   config,
   lib,
-  pkgs,
   modulesPath,
   ...
 }: {
@@ -18,13 +17,37 @@
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/6ccd4a28-ae71-4c02-a0d9-f2d6c84c9d7b";
-    fsType = "ext4";
+    device = "none";
+    fsType = "tmpfs";
+    options = ["defaults" "size=2G" "mode=755"];
   };
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/1562-7E09";
     fsType = "vfat";
+  };
+
+  fileSystems."/nix" = {
+    device = "zpool/nix";
+    fsType = "zfs";
+  };
+
+  fileSystems."/persist" = {
+    device = "zpool/persist";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/persist/home" = {
+    device = "zpool/persist/home";
+    fsType = "zfs";
+    neededForBoot = true;
+  };
+
+  fileSystems."/home/mark" = {
+    device = "none";
+    fsType = "tmpfs";
+    options = ["defaults" "size=2G" "mode=755" "uid=${builtins.toString config.users.users.mark.uid}"];
   };
 
   swapDevices = [];
@@ -37,6 +60,5 @@
   # networking.interfaces.wlp166s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

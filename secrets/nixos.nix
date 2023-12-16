@@ -13,6 +13,7 @@ in {
   config.age.secrets = pipe ./. [
     listFilesRecursive
     (filter (f: !(hasSuffix ".nix" f)))
+    (filter (f: !(hasSuffix ".pub" f)))
     (map (file: nameValuePair (baseNameOf file) {inherit file;}))
     listToAttrs
   ];

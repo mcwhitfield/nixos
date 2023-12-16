@@ -9,16 +9,17 @@
 }: let
   inherit (builtins) filter;
   inherit (self.lib.filesystem) listFilesRecursive;
-  inherit (self.lib.strings) hasSuffix;
+  inherit (self.lib.strings) hasSuffix removePrefix;
   inherit (config.lib.file) mkOutOfStoreSymlink;
   user = "mark";
   homeDir = "/home/${user}";
-  persistenceDir = "/persistent${homeDir}";
-  userConfigs = filter (hasSuffix ".nix") (listFilesRecursive ./modules);
+  persistenceDir = "/persist${homeDir}";
+  userConfigs = filter (hasSuffix ".nix") (listFilesRecursive ./configs);
 in {
   imports = with self.homeModules;
     userConfigs
     ++ [
+      default
       firacode
       impermanence.nixosModules.home-manager.impermanence
     ];
@@ -31,6 +32,7 @@ in {
       address = "${user}@${osConfig.networking.domain}";
       primary = true;
     };
+    age.identityPaths = ["${config.home.homeDirectory}/.ssh/ssh-mark-ed25519"];
     home = {
       username = user;
       homeDirectory = homeDir;
@@ -48,23 +50,28 @@ in {
       };
       persistence.${persistenceDir} = {
         directories = with config.xdg;
-          (with userDirs; [
-            desktop
-            documents
-            download
-            music
-            pictures
-            publicShare
-            templates
-            videos
-          ])
+          (with userDirs;
+            map (removePrefix homeDir) [
+              desktop
+              documents
+              download
+              music
+              pictures
+              publicShare
+              templates
+              videos
+            ])
           ++ [
             ".gnupg"
             ".ssh"
-            /${dataHome}/keyrings
+            "/${dataHome}/keyrings"
           ];
         allowOther = true;
       };
+    };
+    programs.ssh.matchBlocks."*" = {
+      host = "*";
+      identityFile = config.age.secrets."ssh-mark-ed25519".path;
     };
     xdg = {
       enable = true;

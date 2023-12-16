@@ -50,7 +50,7 @@ in {
   };
 
   xdg.configFile."hypr/base.conf" = let
-    path = "users/mark/modules/hyprland/base.conf";
+    path = "users/mark/configs/hyprland/base.conf";
   in {
     source = config.lib.file.mkOutOfStoreSymlink "${nixosRoot}/${path}";
   };

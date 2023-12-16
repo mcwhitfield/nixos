@@ -9,25 +9,10 @@
     withNodeJs = true;
     withPython3 = true;
     withRuby = true;
-  };
-
-  # _lua instead of lua so Telescope doesn't think ./lua is a project root.
-  xdg.configFile."nvim/lua".source = ./_lua;
-
-  home.packages =
-    (with pkgs; [
-      alejandra
-      fd
-      fzf
-      lazygit
-      lua-language-server
-      nil
-      nixd
-      ripgrep
-      rnix-lsp
-      tree-sitter
-      wl-clipboard
-    ])
+    plugins = with pkgs.vimPlugins; [
+      LazyVim
+      lazy-nvim
+    ]
     ++ (with pkgs.vimPlugins.nvim-treesitter-parsers; [
       awk
       bash
@@ -74,4 +59,21 @@
       xml
       yaml
     ]);
+    extraPackages = 
+    with pkgs; [
+      alejandra
+      fd
+      fzf
+      lazygit
+      lua-language-server
+      nil
+      nixd
+      ripgrep
+      rnix-lsp
+      tree-sitter
+      wl-clipboard
+    ];
+  };
+  # _lua instead of lua so Telescope doesn't think ./lua is a project root.
+  xdg.configFile."nvim/lua".source = ./_lua;
 }

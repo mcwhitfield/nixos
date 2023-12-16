@@ -4,7 +4,7 @@
   ...
 }: {
   imports = [
-    self.nixosModules.desktopEnvironment
+    ./desktopEnvironment.nix
   ];
 
   config = {

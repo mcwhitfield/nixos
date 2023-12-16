@@ -28,7 +28,7 @@ let
   allKeys = allHosts ++ allUsers;
 
   privKeys = let
-    matches = secretsMatching "ssh-([^-]*)-([^-.]*)";
+    matches = secretsMatching "^ssh-([^-]*)-([^-.]*)$";
     mkKv = groups: let
       owner = userOrHost groups;
       ownerKeys = keys.${owner};
@@ -46,5 +46,4 @@ in
   privKeys
   // {
     "secrets/firefly-iii".publicKeys = allKeys;
-    "secrets/mark-password".publicKeys = allHosts ++ users.mark;
   }

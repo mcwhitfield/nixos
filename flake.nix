@@ -18,7 +18,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     ezConfigs.url = "github:ehllie/ez-configs";
-    firefly-iii.url = "path:/home/mark/public/firefly-iii";
+    firefly-iii.url = "github:mcwhitfield/firefly-iii-nix";
     fishPlugins-tide = {
       url = "github:IlanCosman/tide/v6.0.1";
       flake = false;
@@ -81,18 +81,15 @@
       ezConfigs = {
         root = ./.;
         globalArgs = ctx;
-        home = {
-          configurationsDirectory = ./users;
-          modulesDirectory = ./modules/home-manager;
-        };
-        nixos = {
-          configurationsDirectory = ./hosts;
-          modulesDirectory = ./modules/nixos;
-        }; #
+        home.configurationsDirectory = ./users;
+        home.modulesDirectory = ./home-modules;
+        nixos.configurationsDirectory = ./hosts;
+        nixos.modulesDirectory = ./nixos-modules;
       };
 
       flake = {
         nixosModules.secrets = ./secrets/nixos.nix;
+	nixosModules.mark = ./users/mark;
         homeManagerModules.secrets = ./secrets/home-manager.nix;
       };
 
@@ -113,6 +110,7 @@
             pkgs.agenix
             home-manager
             nixos-rebuild
+	    gnumake
           ];
         };
       };
