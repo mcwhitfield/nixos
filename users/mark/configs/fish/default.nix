@@ -8,7 +8,7 @@
   inherit (self.lib.trivial) pipe;
   envVars = pipe config.home.sessionVariables [
     (mapAttrs
-    (k: v: "set -g ${k} \"${v}\""))
+      (k: v: "set -g ${k} \"${v}\""))
     attrValues
     (concatStringsSep "\n")
   ];
@@ -23,6 +23,7 @@ in {
     };
 
     functions = {
+      p.body = "cd ~/public/$argv[1]";
       fish_command_not_found = {
         body = ''
           nix run nixpkgs#$argv[1] -- $argv[2..-1]

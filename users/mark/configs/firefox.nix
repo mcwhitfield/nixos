@@ -1,5 +1,26 @@
-{pkgs, ...}: {
+{
+  config,
+  nur,
+  ...
+}: let
+  inherit (config.lib.file) mkOutOfStoreSymlink;
+  extensions = with config.nur.repos.rycee.firefox-addons; {
+    "{446900e4-71c2-419f-a6a7-df9c091e268b}" = bitwarden;
+    "{74145f27-f039-47ce-a470-a662b129930a}" = clearurls;
+    "addon@darkreader.org" = darkreader;
+    "jid1-BoFifL9Vbdl2zQ@jetpack" = decentraleyes;
+    "jid1-MnnxcxisBPnSXQ@jetpack" = privacy-badger;
+    "uBlock0@raymondhill.net" = ublock-origin;
+    "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = vimium;
+  };
+  configDir = "${config.home.homeDirectory}/.mozilla";
+in {
+  imports = [
+    nur.hmModules.nur
+  ];
   config = {
+    home.persistDirs = [configDir];
+    xdg.configFile."mozilla".source = mkOutOfStoreSymlink configDir;
     programs.firefox = {
       enable = true;
       policies = {
@@ -37,19 +58,11 @@
           };
         };
 
-        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-          bitwarden
-          clearurls
-          darkreader
-          decentraleyes
-          privacy-badger
-          ublock-origin
-          vimium
-        ];
-
         id = 0;
 
         name = "Mark Whitfield";
+
+        extensions = builtins.attrValues extensions;
 
         search = {
           default = "DuckDuckGo";
@@ -68,10 +81,10 @@
         };
 
         settings = {
-          gfx.webrender.all = true;
-          media.ffmpeg.vaapi.enabled = true;
-          reader.parse-on-load.force-enabled = true;
-          widget.dmabuf.force-enabled = true;
+          "gfx.webrender.all" = true;
+          "media.ffmpeg.vaapi.enabled" = true;
+          "reader.parse-on-load.force-enabled" = true;
+          "widget.dmabuf.force-enabled" = true;
         };
       };
     };

@@ -1,10 +1,8 @@
-{
-  config,
-  persistenceDir,
-  ...
-}: {
+{config, ...}: {
   # Preserve `direnv allow` across reboots.
-  home.persistence.${persistenceDir}.directories = ["/${config.xdg.dataHome}/direnv"];
+  home.persistDirs = ["${config.xdg.dataHome}/direnv"];
+  home.sessionVariables.DIRENV_LOG_FORMAT = "\"\"";
+
   programs.direnv = {
     enable = true;
     enableBashIntegration = true;

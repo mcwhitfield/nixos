@@ -44,10 +44,10 @@
     neededForBoot = true;
   };
 
-  fileSystems."/home/mark" = {
-    device = "none";
-    fsType = "tmpfs";
-    options = ["defaults" "size=2G" "mode=755" "uid=${builtins.toString config.users.users.mark.uid}"];
+  fileSystems."/etc/ssh" = {
+    device = "/persist/etc/ssh";
+    neededForBoot = true;
+    options = ["bind"];
   };
 
   swapDevices = [];

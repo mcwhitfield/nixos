@@ -1,6 +1,5 @@
 {
   self,
-  config,
   pkgs,
   domain,
   fps,
@@ -38,6 +37,7 @@ in {
         "/var/lib/systemd/coredump"
         "/etc/NetworkManager/system-connections"
         "/etc/nixos"
+        "/etc/ssh"
       ];
       files = [
         "/etc/machine-id"
@@ -94,13 +94,5 @@ in {
     time.timeZone = "America/New_York";
 
     users.mutableUsers = false;
-    users.users = {
-      mark = {
-        uid = 1000;
-        initialHashedPassword = "$6$x4Czbd9boWzFUySX$pgTJ6Twtm4l98ho8my945FtF4SYwYe.fbJqbfPzm7SqIPW/lxts400f2dgvYr4Z5ahDA866TvtLxLNlqPt7sY.";
-        isNormalUser = true;
-        extraGroups = ["wheel" "networkmanager" "podman"];
-      };
-    };
   };
 }

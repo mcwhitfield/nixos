@@ -1,13 +1,6 @@
 {
   description = "Home Network";
 
-  nixConfig = {
-    experimental-features = ["nix-command" "flakes"];
-    extra-trusted-substituters = [
-      "https://nix-community.cachix.org"
-    ];
-  };
-
   inputs = {
     agenix = {
       url = "github:ryantm/agenix";
@@ -64,6 +57,7 @@
     rustOverlay,
     ...
   }: let
+    inherit (nixpkgs.lib.trivial) pipe;
     constants = import ./inputs/constants.nix;
     dockerhub = import ./inputs/dockerhub.nix;
     ctx = inputs // constants // dockerhub;
@@ -89,7 +83,7 @@
 
       flake = {
         nixosModules.secrets = ./secrets/nixos.nix;
-	nixosModules.mark = ./users/mark;
+        nixosModules.users-mark = ./users/mark/nixos.nix;
         homeManagerModules.secrets = ./secrets/home-manager.nix;
       };
 
@@ -110,7 +104,7 @@
             pkgs.agenix
             home-manager
             nixos-rebuild
-	    gnumake
+            gnumake
           ];
         };
       };

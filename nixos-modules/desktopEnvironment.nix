@@ -1,10 +1,11 @@
-{...}: {
+{pkgs, ...}: {
   services.xserver = {
     enable = true;
     layout = "us";
     xkbVariant = "";
   };
 
+  environment.systemPackages = [pkgs.pulseaudio];
   services.printing.enable = true;
   security.rtkit.enable = true;
   sound.enable = true;

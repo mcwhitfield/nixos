@@ -1,4 +1,9 @@
-{self, ...}: {
+{
+  self,
+  config,
+  nixosRoot,
+  ...
+}: {
   imports = with self.homeManagerModules; [
     secrets
   ];
@@ -8,4 +13,5 @@
   systemd.user.services.agenix.Unit.After = [
     "basic.target"
   ];
+  xdg.configFile.home-manager.source = config.lib.file.mkOutOfStoreSymlink nixosRoot;
 }
