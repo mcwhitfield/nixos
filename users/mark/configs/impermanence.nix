@@ -14,7 +14,7 @@ in {
     type = types.listOf types.str;
     default = [];
   };
-  persistence."/persist${homeDir}" = {
+  config.home.persistence."/persist${homeDir}" = {
     directories = map (removePrefix homeDir) config.home.persistDirs;
     allowOther = true;
   };

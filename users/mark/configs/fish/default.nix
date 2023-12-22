@@ -1,6 +1,7 @@
 {
   self,
   config,
+  fps,
   ...
 }: let
   inherit (builtins) attrValues concatStringsSep;
@@ -13,6 +14,12 @@
     (concatStringsSep "\n")
   ];
 in {
+  imports = [
+    # https://discourse.nixos.org/t/how-to-specify-programs-sqlite-for-command-not-found-from-flakes/22722
+    fps.nixosModules.programs-sqlite
+  ];
+  programs.carapace.enable = true;
+  programs.command-not-found.enable = true;
   programs.fish = {
     enable = true;
     interactiveShellInit = envVars;

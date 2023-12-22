@@ -10,11 +10,13 @@
   inherit (self.lib.trivial) pipe;
 in {
   imports = [agenix.nixosModules.default];
-  config.age.secrets = pipe ./. [
+  age.secrets = pipe ./. [
     listFilesRecursive
     (filter (f: !(hasSuffix ".nix" f)))
     (filter (f: !(hasSuffix ".pub" f)))
     (map (file: nameValuePair (baseNameOf file) {inherit file;}))
     listToAttrs
   ];
+  # Ensure /persist mounts with required ssh keys are available.
+  systemd.services.agenix.after = ["basic.target"];
 }

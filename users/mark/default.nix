@@ -7,17 +7,13 @@
 }: let
   inherit (builtins) filter;
   inherit (self.lib.filesystem) listFilesRecursive;
-  inherit (self.lib.strings) hasSuffix removePrefix;
+  inherit (self.lib.lists) flatten;
+  inherit (self.lib.strings) hasSuffix;
   user = "mark";
   homeDir = "/home/${user}";
   userConfigs = filter (hasSuffix ".nix") (listFilesRecursive ./configs);
 in {
-  imports = with self.homeModules;
-    userConfigs
-    ++ [
-      default
-      firacode
-    ];
+  imports = flatten [self.homeModules.default userConfigs];
 
   config = {
     _module.args = {
@@ -34,6 +30,7 @@ in {
       packages = with pkgs; [
         dolphin
         nix-output-monitor
+        tor-browser
       ];
       keyboard.options = [
         "caps:escape"
@@ -43,6 +40,10 @@ in {
         "${homeDir}/.ssh"
         "${dataHome}/keyrings"
       ];
+    };
+    programs = {
+      lsd.enable = true;
+      lsd.enableAliases = true;
     };
   };
 }

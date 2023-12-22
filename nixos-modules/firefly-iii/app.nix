@@ -12,6 +12,8 @@
   # some errors shown to users who aren't admin.
   SITE_OWNER = "mail@example.com";
 
+  COMPOSER_ALLOW_SUPERUSER = "1";
+
   # The encryption key for your sessions. Keep this very secure. Change it to a
   # string of exactly 32 chars or use something like `php artisan key:generate`
   # to generate it. If you use Docker or similar, you can set this variable from

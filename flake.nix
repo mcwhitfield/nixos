@@ -37,6 +37,10 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tokyonight = {
+      url = "github:stronk-dev/Tokyo-Night-Linux";
+      flake = false;
+    };
     wallpapers = {
       url = "github:makccr/wallpapers";
       flake = false;
@@ -57,7 +61,6 @@
     rustOverlay,
     ...
   }: let
-    inherit (nixpkgs.lib.trivial) pipe;
     constants = import ./inputs/constants.nix;
     dockerhub = import ./inputs/dockerhub.nix;
     ctx = inputs // constants // dockerhub;
