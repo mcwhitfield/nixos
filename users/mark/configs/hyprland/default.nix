@@ -1,20 +1,20 @@
 # not working
 {
+  self,
   config,
-  lib,
   pkgs,
   hyprland,
-  nixosRoot,
-  wallpapers,
   tokyonight,
   ...
 }: let
   inherit (builtins) concatStringsSep;
-  inherit (lib.lists) flatten;
+  inherit (self.lib.flakes) runtimePath;
+  inherit (self.lib.lists) flatten;
 in {
   imports = [
     hyprland.homeManagerModules.default
   ];
+
   gtk = {
     enable = true;
     font = {
@@ -32,30 +32,21 @@ in {
   };
   home.packages = flatten (with pkgs; [
     qt6.qtwayland
-    wofi
     (with libsForQt5; [
       polkit-kde-agent
       qt5.qtwayland
     ])
     xdg-desktop-portal-hyprland
   ]);
-  programs.waybar = {
-    enable = true;
-    systemd.enable = true;
-  };
-  programs.swaylock.enable = true;
-  programs.wpaperd = {
-    enable = true;
-    settings = {
-      default = {
-        path = "${wallpapers}/wallpapers/";
-        duration = "30m";
-      };
+  programs = {
+    swaylock.enable = true;
+    waybar = {
+      enable = true;
+      systemd.enable = true;
     };
+    wofi.enable = true;
   };
-  services.dunst = {
-    enable = true;
-  };
+  services.dunst.enable = true;
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
@@ -68,12 +59,10 @@ in {
     '';
   };
 
-  xdg.configFile."hypr/base.conf" = let
-    path = "users/mark/configs/hyprland/base.conf";
-  in {
-    source = config.lib.file.mkOutOfStoreSymlink "${nixosRoot}/${path}";
+  xdg.configFile = {
+    "waybar".source = "${tokyonight}/.config/waybar";
+    "gtk-3.0".source = "${tokyonight}/.config/gtk-3.0";
+    "wofi".source = "${tokyonight}/.config/wofi";
+    "hypr/base.conf".source = runtimePath config ./base.conf;
   };
-  xdg.configFile."waybar".source = "${tokyonight}/.config/waybar";
-  xdg.configFile."gtk-3.0".source = "${tokyonight}/.config/gtk-3.0";
-  xdg.configFile."wofi".source = "${tokyonight}/.config/wofi";
 }

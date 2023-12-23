@@ -1,5 +1,8 @@
-ctx @ {inputs, ...}: let
-  inherit (inputs) nixpkgs home-manager;
+inputs @ {
+  nixpkgs,
+  home-manager,
+  ...
+}: let
   inherit (nixpkgs.lib) path strings;
   inherit (strings) removeSuffix splitString;
   inherit (nixpkgs.lib.attrsets) mergeAttrsList recursiveUpdate setAttrByPath;
@@ -8,7 +11,7 @@ ctx @ {inputs, ...}: let
 
   relativePath = p: pipe p [(path.removePrefix ./.) (strings.removePrefix "./")];
   importSubmodule = p: let
-    module = import p ctx;
+    module = import p inputs;
   in
     pipe p [
       relativePath
@@ -21,9 +24,8 @@ ctx @ {inputs, ...}: let
     (map importSubmodule)
     mergeAttrsList
   ];
-in {
-  config.flake.lib = pipe myLib [
+in
+  pipe myLib [
     (recursiveUpdate nixpkgs.lib)
     (recursiveUpdate home-manager.lib)
-  ];
-}
+  ]

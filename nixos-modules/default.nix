@@ -8,7 +8,6 @@
     locale
     network
     nix
-    paranoid
     persist
     secrets
   ];

@@ -1,5 +1,6 @@
-{lib, ...}: let
+{self, ...}: let
   inherit (builtins) isAttrs listToAttrs;
+  inherit (self) lib;
   inherit
     (lib.attrsets)
     concatMapAttrs

@@ -20,16 +20,6 @@ in {
   };
 
   services = {
-    headscale = {
-      enable = true;
-      address = "0.0.0.0";
-      port = 8080;
-      settings = {
-        ip_prefixes = ["100.64.0.0/10"];
-        server_url = "https://${headscaleDomain}";
-        logtail.enabled = false;
-      };
-    };
     nginx.virtualHosts.${headscaleDomain} = {
       forceSSL = true;
       enableACME = true;

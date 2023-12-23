@@ -15,17 +15,12 @@ in {
     default = {};
   };
   config = {
+    environment.systemPackages = [pkgs.yubikey-personalization];
     environment.etc.${u2fAuthFile}.text = pipe config.security.pam.u2f.users [
       attrValues
       flatten
       (concatStringsSep "\n")
     ];
-    services.udev.packages = [pkgs.yubikey-personalization];
-
-    programs.gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
     security.pam = {
       u2f = {
         authFile = "/etc/${config.environment.etc.${u2fAuthFile}.target}";
@@ -36,5 +31,7 @@ in {
         sudo.u2fAuth = true;
       };
     };
+    services.pcscd.enable = true;
+    services.udev.packages = [pkgs.yubikey-personalization];
   };
 }

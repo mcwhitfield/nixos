@@ -1,8 +1,8 @@
-{lib, ...}: let
+{self, ...}: let
   inherit (builtins) attrNames readDir;
-  inherit (lib.attrsets) filterValues;
-  inherit (lib.operators) eq;
-  inherit (lib.trivial) compose;
+  inherit (self.lib.attrsets) filterValues;
+  inherit (self.lib.operators) eq;
+  inherit (self.lib.trivial) compose;
 in rec {
   filesIn = subpathsOfType "regular";
   subpathsOfType = type:

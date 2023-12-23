@@ -16,6 +16,6 @@ in {
   };
   config.home.persistence."/persist${homeDir}" = {
     directories = map (removePrefix homeDir) config.home.persistDirs;
-    allowOther = true;
+    allowOther = false;
   };
 }

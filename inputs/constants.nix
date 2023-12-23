@@ -1,4 +1,4 @@
 {
-  domain = "TBD.com";
+  domain = "whitfield.one";
   nixosRoot = "/etc/nixos";
 }

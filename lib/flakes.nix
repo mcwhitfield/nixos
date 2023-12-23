@@ -1,10 +1,10 @@
 {
   self,
-  inputs,
-  lib,
+  nixosRoot,
   ...
 }: let
   inherit (builtins) filter toString;
+  inherit (self) lib;
   inherit (lib) path strings;
   inherit (lib.attrsets) explode genNames mapAttrsRecursive;
   inherit (lib.filesystem) listFilesRecursive;
@@ -31,7 +31,7 @@ in rec {
     compose [
       toString
       (strings.removePrefix "${self}")
-      (addPrefix inputs.nixosRoot)
+      (addPrefix nixosRoot)
       hmConfig.lib.file.mkOutOfStoreSymlink
     ];
 }

@@ -45,5 +45,6 @@ in {
       lsd.enable = true;
       lsd.enableAliases = true;
     };
+    systemd.user.startServices = true;
   };
 }

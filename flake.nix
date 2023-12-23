@@ -68,7 +68,6 @@
     flakeParts.lib.mkFlake {inherit inputs;} {
       imports = [
         ezConfigs.flakeModule
-        ./lib
       ];
 
       systems = [
@@ -85,6 +84,7 @@
       };
 
       flake = {
+        lib = import ./lib ctx;
         nixosModules.secrets = ./secrets/nixos.nix;
         nixosModules.users-mark = ./users/mark/nixos.nix;
         homeManagerModules.secrets = ./secrets/home-manager.nix;
