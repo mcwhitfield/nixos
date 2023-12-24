@@ -15,7 +15,7 @@ in {
     default = {};
   };
   config = {
-    environment.systemPackages = [pkgs.yubikey-personalization];
+    environment.systemPackages = with pkgs; [yubikey-personalization yubikey-manager];
     environment.etc.${u2fAuthFile}.text = pipe config.security.pam.u2f.users [
       attrValues
       flatten
@@ -32,6 +32,6 @@ in {
       };
     };
     services.pcscd.enable = true;
-    services.udev.packages = [pkgs.yubikey-personalization];
+    services.udev.packages = with pkgs; [yubikey-personalization yubikey-manager];
   };
 }

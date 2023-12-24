@@ -28,7 +28,7 @@ in {
       homeDirectory = homeDir;
       stateVersion = "23.11";
       packages = with pkgs; [
-        dolphin
+        ranger
         nix-output-monitor
         tor-browser
       ];

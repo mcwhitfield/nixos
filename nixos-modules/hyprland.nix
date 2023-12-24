@@ -1,4 +1,8 @@
-{hyprland, ...}: {
+{
+  hyprland,
+  pkgs,
+  ...
+}: {
   imports = [
     hyprland.nixosModules.default
     ./desktopEnvironment.nix

@@ -1,4 +1,3 @@
-# not working
 {
   self,
   config,
@@ -31,6 +30,8 @@ in {
     };
   };
   home.packages = flatten (with pkgs; [
+    brightnessctl
+    pamixer
     qt6.qtwayland
     (with libsForQt5; [
       polkit-kde-agent
@@ -39,14 +40,12 @@ in {
     xdg-desktop-portal-hyprland
   ]);
   programs = {
-    swaylock.enable = true;
-    waybar = {
-      enable = true;
-      systemd.enable = true;
-    };
     wofi.enable = true;
   };
-  services.dunst.enable = true;
+  services = {
+    dunst.enable = true;
+    playerctld.enable = true;
+  };
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
@@ -60,7 +59,6 @@ in {
   };
 
   xdg.configFile = {
-    "waybar".source = "${tokyonight}/.config/waybar";
     "gtk-3.0".source = "${tokyonight}/.config/gtk-3.0";
     "wofi".source = "${tokyonight}/.config/wofi";
     "hypr/base.conf".source = runtimePath config ./base.conf;
