@@ -1,6 +1,7 @@
 {self, ...}: {
   imports = with self.nixosModules; [
-    framework16
+    flipper-zero
+    framework-16
     gnome
     hyprland
     vaultwarden

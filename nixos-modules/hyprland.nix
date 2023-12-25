@@ -1,11 +1,11 @@
 {
+  self,
   hyprland,
-  pkgs,
   ...
 }: {
-  imports = [
+  imports = with self.nixosModules; [
     hyprland.nixosModules.default
-    ./desktopEnvironment.nix
+    desktop-environment
   ];
   services.xserver.displayManager.defaultSession = "hyprland";
   programs.hyprland = {

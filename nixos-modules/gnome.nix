@@ -3,8 +3,8 @@
   pkgs,
   ...
 }: {
-  imports = [
-    ./desktopEnvironment.nix
+  imports = with self.nixosModules; [
+    desktop-environment
   ];
 
   config = {
