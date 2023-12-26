@@ -45,5 +45,7 @@ let
 in
   privKeys
   // {
-    "secrets/firefly-iii".publicKeys = allKeys;
+    "secrets/firefly-iii-app".publicKeys = allKeys;
+    "secrets/firefly-iii-db".publicKeys = allKeys;
+    "secrets/firefly-iii-importer".publicKeys = allKeys;
   }

@@ -33,7 +33,6 @@ in {
         tor-browser
       ];
       keyboard.options = [
-        "caps:escape"
       ];
       persistDirs = with config.xdg; [
         "${homeDir}/.gnupg"

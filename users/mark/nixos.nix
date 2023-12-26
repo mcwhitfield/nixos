@@ -1,5 +1,7 @@
 inputs @ {
   config,
+  pkgs,
+  lib,
   home-manager,
   ...
 }: {
@@ -24,5 +26,20 @@ inputs @ {
       isNormalUser = true;
       extraGroups = ["wheel" "networkmanager" "podman" "wireshark"];
     };
+  };
+  services = {
+    interception-tools.enable = true;
+    # Some weird-ass bug where the final systemd unit overrides its own PATH in ExecStart?
+    # Can't figure out where that's coming from, it's not part of ExecStart in the Nix config.
+    interception-tools.udevmonConfig = let
+      intercept = lib.getExe' pkgs.interception-tools "intercept";
+      uinput = lib.getExe' pkgs.interception-tools "uinput";
+      caps2superesc = lib.getExe' pkgs.caps2superesc "caps2superesc";
+    in ''
+      - JOB: "${intercept} -g $DEVNODE | ${caps2superesc} -m 1 -t 1000 | ${uinput} -d $DEVNODE"
+        DEVICE:
+          EVENTS:
+            EV_KEY: [KEY_CAPSLOCK, KEY_ESC]
+    '';
   };
 }

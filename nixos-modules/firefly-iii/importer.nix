@@ -1,4 +1,7 @@
-{...}: {
+{config, ...}: let
+  cfg = config.services.firefly-iii;
+  ociCfg = config.virtualisation.oci-containers.containers;
+in {
   # Firefly Data Importer (FIDI) configuration file
 
   # Where is Firefly III?
@@ -11,7 +14,7 @@
   #
   # This variable can be set from a file if you append it with _FILE
   #
-  FIREFLY_III_URL = "";
+  FIREFLY_III_URL = "http://${ociCfg.${cfg.app.containerName}.hostname}:${toString cfg.app.port.container}";
 
   #
   # Imagine Firefly III can be reached at "http://172.16.0.2:8082" (internal Docker network or something).
@@ -26,7 +29,7 @@
   #
   # This variable can be set from a file if you append it with _FILE
   #
-  VANITY_URL = "";
+  VANITY_URL = "http://localhost:${toString cfg.app.port.host}";
 
   #
   # Set your Firefly III Personal Access Token (OAuth)
@@ -166,7 +169,7 @@
   #
   # Time zone
   #
-  TZ = "Europe/Amsterdam";
+  TZ = config.time.timeZone;
 
   #
   # Use ASSET_URL when you're running the data importer in a sub-directory.

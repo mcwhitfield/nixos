@@ -10,8 +10,8 @@
       url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    caps2superesc.url = "git+ssh://git@github.com/mcwhitfield/caps2superesc";
     ezConfigs.url = "github:ehllie/ez-configs";
-    firefly-iii.url = "github:mcwhitfield/firefly-iii-nix";
     fishPlugins-tide = {
       url = "github:IlanCosman/tide/v6.0.1";
       flake = false;
@@ -54,6 +54,7 @@
   outputs = inputs @ {
     self,
     agenix,
+    caps2superesc,
     ezConfigs,
     flakeParts,
     nixpkgs,
@@ -99,7 +100,7 @@
       }: {
         _module.args.pkgs = import nixpkgs {
           inherit system;
-          overlays = [agenix.overlays.default];
+          overlays = [agenix.overlays.default caps2superesc.overlays.default];
         };
         devShells.default = pkgs.mkShell {
           name = "dev";

@@ -1,4 +1,8 @@
-{...}: {
+{config, ...}: let
+  cfg = config.services.firefly-iii;
+  ociCfg = config.virtualisation.oci-containers.containers;
+  settings = cfg.app.settings;
+in {
   # You can leave this on "local". If you change it to production most console
   # commands will ask for extra confirmation. Never set it to "testing".
   APP_ENV = "local";
@@ -10,26 +14,16 @@
   # This should be your email address. If you use Docker or similar, you can set
   # this variable from a file by using SITE_OWNER_FILE The variable is used in
   # some errors shown to users who aren't admin.
-  SITE_OWNER = "mail@example.com";
+  SITE_OWNER = settings.siteOwner;
 
   COMPOSER_ALLOW_SUPERUSER = "1";
-
-  # The encryption key for your sessions. Keep this very secure. Change it to a
-  # string of exactly 32 chars or use something like `php artisan key:generate`
-  # to generate it. If you use Docker or similar, you can set this variable from
-  # a file by using APP_KEY_FILE
-  #
-  # Avoid the "#" character in your APP_KEY, it may break
-  # things.
-  #
-  APP_KEY = "SomeRandomStringOf32CharsExactly";
 
   # Firefly III will launch using this language (for new users and
   # unauthenticated visitors) For a list of available languages: https://github.com/firefly-iii/firefly-iii/tree/main/resources/lang
   #
   # If text is still in English, remember that not everything may have been
   # translated.
-  DEFAULT_LANGUAGE = "en_US";
+  DEFAULT_LANGUAGE = settings.defaultLanguage;
 
   # The locale defines how numbers are formatted. by default this value is the
   # same as whatever the language is.
@@ -37,17 +31,17 @@
 
   # Change this value to your preferred time zone. Example: Europe/Amsterdam For
   # a list of supported time zones, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  TZ = "Europe/Amsterdam";
+  TZ = config.time.timeZone;
 
   # TRUSTED_PROXIES is a useful variable when using Docker and/or a reverse
   # proxy. Set it to ** and reverse proxies work just fine.
-  TRUSTED_PROXIES = "";
+  TRUSTED_PROXIES = "**";
 
   # The log channel defines where your log entries go to. Several other options
   # exist. You can use 'single' for one big fat error log (not recommended).
   # Also available are 'syslog', 'errorlog' and 'stdout' which will log to the
   # system itself. A rotating log option is 'daily', creates 5 files that (surprise) rotate. A cool option is 'papertrail' for cloud logging Default setting 'stack' will log to 'daily' and to 'stdout' at the same time.
-  LOG_CHANNEL = "stack";
+  LOG_CHANNEL = "syslog";
 
   # Log level. You can set this from least severe to most severe: debug, info,
   # notice, warning, error, critical, alert, emergency If you set it to debug
@@ -81,11 +75,10 @@
   # Database credentials. Make sure the database exists. I recommend a dedicated
   # user for Firefly III For other database types, please see the FAQ: https://docs.firefly-iii.org/firefly-iii/faq/self-hosted/#i-want-to-use-sqlite If you use Docker or similar, you can set these variables from a file by appending them with _FILE Use "pgsql" for PostgreSQL Use "mysql" for MySQL and MariaDB. Use "sqlite" for SQLite.
   DB_CONNECTION = "mysql";
-  DB_HOST = "db";
-  DB_PORT = "3306";
-  DB_DATABASE = "firefly";
+  DB_HOST = ociCfg.${cfg.db.containerName}.hostname;
+  DB_PORT = toString cfg.db.port.container;
+  DB_DATABASE = cfg.db.dbName;
   DB_USERNAME = "firefly";
-  DB_PASSWORD = "secret_firefly_password";
   # leave empty or omit when not using a socket
   # connection
   DB_SOCKET = "";
@@ -289,7 +282,7 @@
   # You can set this variable from a file by appending it with
   # _FILE
   #
-  STATIC_CRON_TOKEN = "";
+  STATIC_CRON_TOKEN = settings.staticCronToken;
 
   # You can fine tune the start-up of a Docker container by editing these
   # environment variables. Use this at your own risk. Disabling certain checks

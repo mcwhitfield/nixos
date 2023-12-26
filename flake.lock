@@ -45,28 +45,23 @@
         "type": "github"
       }
     },
-    "arion_2": {
+    "caps2superesc": {
       "inputs": {
-        "flake-parts": "flake-parts_4",
-        "haskell-flake": "haskell-flake_2",
-        "hercules-ci-effects": "hercules-ci-effects_2",
-        "nixpkgs": [
-          "firefly-iii",
-          "nixpkgs"
-        ]
+        "flake-parts": "flake-parts_3",
+        "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1701794742,
-        "narHash": "sha256-A4TZktNCr975ddMf4ShZwuB8x7USOYGCZ9Xwfits8gs=",
-        "owner": "hercules-ci",
-        "repo": "arion",
-        "rev": "da2141cd9383c8c1cdcd3364b1ba6c32058ba659",
-        "type": "github"
+        "lastModified": 1703609038,
+        "narHash": "sha256-BQnb79VEd+cOjZuJuX6miHT4LGG0ijLBuFW8mNBu74w=",
+        "ref": "refs/heads/main",
+        "rev": "da2cc5b70f23b525c422ae37d7afb8c0a4eb09b7",
+        "revCount": 2,
+        "type": "git",
+        "url": "ssh://git@github.com/mcwhitfield/caps2superesc"
       },
       "original": {
-        "owner": "hercules-ci",
-        "repo": "arion",
-        "type": "github"
+        "type": "git",
+        "url": "ssh://git@github.com/mcwhitfield/caps2superesc"
       }
     },
     "darwin": {
@@ -93,8 +88,8 @@
     },
     "ezConfigs": {
       "inputs": {
-        "flake-parts": "flake-parts_3",
-        "nixpkgs": "nixpkgs"
+        "flake-parts": "flake-parts_4",
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1700606599,
@@ -107,43 +102,6 @@
       "original": {
         "owner": "ehllie",
         "repo": "ez-configs",
-        "type": "github"
-      }
-    },
-    "firefly": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1702188351,
-        "narHash": "sha256-rvpJcKeJ7Bw/XWbCA9o+W9ju3ETOZBMqSpVxyzQ3RGA=",
-        "owner": "firefly-iii",
-        "repo": "firefly-iii",
-        "rev": "0b22b056bcd944c8a05f0e51e8375a0667f036a3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "firefly-iii",
-        "repo": "firefly-iii",
-        "type": "github"
-      }
-    },
-    "firefly-iii": {
-      "inputs": {
-        "arion": "arion_2",
-        "firefly": "firefly",
-        "flake-parts": "flake-parts_6",
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1702677980,
-        "narHash": "sha256-VVk91Bvr2lLUFMp69jYhRaqbNFD0/yPBBHbjdQj7GF4=",
-        "owner": "mcwhitfield",
-        "repo": "firefly-iii-nix",
-        "rev": "74575c785b66e2fd0d529c15856a26d8da8fb170",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mcwhitfield",
-        "repo": "firefly-iii-nix",
         "type": "github"
       }
     },
@@ -208,6 +166,23 @@
     },
     "flake-parts_3": {
       "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1701473968,
+        "narHash": "sha256-YcVE5emp1qQ8ieHUnxt1wCZCC3ZfAS+SRRWZ2TMda7E=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "34fed993f1674c8d06d58b37ce1e0fe5eebcb9f5",
+        "type": "github"
+      },
+      "original": {
+        "id": "flake-parts",
+        "type": "indirect"
+      }
+    },
+    "flake-parts_4": {
+      "inputs": {
         "nixpkgs-lib": [
           "ezConfigs",
           "nixpkgs"
@@ -219,68 +194,6 @@
         "owner": "hercules-ci",
         "repo": "flake-parts",
         "rev": "8c9fa2545007b49a5db5f650ae91f227672c3877",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "type": "github"
-      }
-    },
-    "flake-parts_4": {
-      "inputs": {
-        "nixpkgs-lib": [
-          "firefly-iii",
-          "arion",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1701473968,
-        "narHash": "sha256-YcVE5emp1qQ8ieHUnxt1wCZCC3ZfAS+SRRWZ2TMda7E=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "rev": "34fed993f1674c8d06d58b37ce1e0fe5eebcb9f5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "type": "github"
-      }
-    },
-    "flake-parts_5": {
-      "inputs": {
-        "nixpkgs-lib": [
-          "firefly-iii",
-          "arion",
-          "hercules-ci-effects",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1696343447,
-        "narHash": "sha256-B2xAZKLkkeRFG5XcHHSXXcP7To9Xzr59KXeZiRf4vdQ=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "rev": "c9afaba3dfa4085dbd2ccb38dfade5141e33d9d4",
-        "type": "github"
-      },
-      "original": {
-        "id": "flake-parts",
-        "type": "indirect"
-      }
-    },
-    "flake-parts_6": {
-      "inputs": {
-        "nixpkgs-lib": "nixpkgs-lib"
-      },
-      "locked": {
-        "lastModified": 1701473968,
-        "narHash": "sha256-YcVE5emp1qQ8ieHUnxt1wCZCC3ZfAS+SRRWZ2TMda7E=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "rev": "34fed993f1674c8d06d58b37ce1e0fe5eebcb9f5",
         "type": "github"
       },
       "original": {
@@ -362,49 +275,10 @@
         "type": "github"
       }
     },
-    "haskell-flake_2": {
-      "locked": {
-        "lastModified": 1675296942,
-        "narHash": "sha256-u1X1sblozi5qYEcLp1hxcyo8FfDHnRUVX3dJ/tW19jY=",
-        "owner": "srid",
-        "repo": "haskell-flake",
-        "rev": "c2cafce9d57bfca41794dc3b99c593155006c71e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "srid",
-        "ref": "0.1.0",
-        "repo": "haskell-flake",
-        "type": "github"
-      }
-    },
     "hercules-ci-effects": {
       "inputs": {
         "flake-parts": "flake-parts_2",
         "nixpkgs": [
-          "arion",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1701009247,
-        "narHash": "sha256-GuX16rzRze2y7CsewJLTV6qXkXWyEwp6VCZXi8HLruU=",
-        "owner": "hercules-ci",
-        "repo": "hercules-ci-effects",
-        "rev": "31b6cd7569191bfcd0a548575b0e2ef953ed7d09",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "hercules-ci-effects",
-        "type": "github"
-      }
-    },
-    "hercules-ci-effects_2": {
-      "inputs": {
-        "flake-parts": "flake-parts_5",
-        "nixpkgs": [
-          "firefly-iii",
           "arion",
           "nixpkgs"
         ]
@@ -564,11 +438,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1699963925,
-        "narHash": "sha256-LE7OV/SwkIBsCpAlIPiFhch/J+jBDGEZjNfdnzCnCrY=",
+        "lastModified": 1703255338,
+        "narHash": "sha256-Z6wfYJQKmDN9xciTwU3cOiOk+NElxdZwy/FiHctCzjU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "bf744fe90419885eefced41b3e5ae442d732712d",
+        "rev": "6df37dc6a77654682fe9f071c62b4242b5342e04",
         "type": "github"
       },
       "original": {
@@ -616,11 +490,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1702151865,
-        "narHash": "sha256-9VAt19t6yQa7pHZLDbil/QctAgVsA66DLnzdRGqDisg=",
+        "lastModified": 1699963925,
+        "narHash": "sha256-LE7OV/SwkIBsCpAlIPiFhch/J+jBDGEZjNfdnzCnCrY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "666fc80e7b2afb570462423cb0e1cf1a3a34fedd",
+        "rev": "bf744fe90419885eefced41b3e5ae442d732712d",
         "type": "github"
       },
       "original": {
@@ -681,8 +555,8 @@
       "inputs": {
         "agenix": "agenix",
         "arion": "arion",
+        "caps2superesc": "caps2superesc",
         "ezConfigs": "ezConfigs",
-        "firefly-iii": "firefly-iii",
         "fishPlugins-tide": "fishPlugins-tide",
         "flakeParts": "flakeParts",
         "fps": "fps",

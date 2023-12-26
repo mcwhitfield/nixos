@@ -1,6 +1,7 @@
 {
   self,
   nixosGenerators,
+  caps2superesc,
   ...
 }: {
   imports = with self.nixosModules; [
@@ -23,5 +24,6 @@
       supportedFilesystems = ["zfs"];
       tmp.useTmpfs = true;
     };
+    nixpkgs.overlays = [caps2superesc.overlays.default];
   };
 }

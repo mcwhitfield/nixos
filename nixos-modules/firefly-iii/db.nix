@@ -1,6 +1,6 @@
-{...}: {
-  MYSQL_RANDOM_ROOT_PASSWORD = "yes";
-  MYSQL_USER = "firefly";
-  MYSQL_PASSWORD = "secret_firefly_password";
-  MYSQL_DATABASE = "firefly";
+{config, ...}: let
+  cfg = config.services.firefly-iii;
+in {
+  MARIADB_USER = "firefly";
+  MARIADB_DATABASE = cfg.db.dbName;
 }
