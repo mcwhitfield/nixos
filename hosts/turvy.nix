@@ -25,7 +25,7 @@
     services.physlock.lockOn.suspend = true;
 
     services.firefly-iii = {
-      enable = true;
+      enable = false;
       enableImpermanenceIntegration = true;
       app.secrets.source = config.age.secrets."firefly-iii-app".path;
       app.settings.siteOwner = config.home-manager.users.mark.accounts.email.accounts.mark.address;
