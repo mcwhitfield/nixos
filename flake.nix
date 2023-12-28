@@ -6,16 +6,8 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    arion = {
-      url = "github:hercules-ci/arion";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     caps2superesc.url = "git+ssh://git@github.com/mcwhitfield/caps2superesc";
     ezConfigs.url = "github:ehllie/ez-configs";
-    fishPlugins-tide = {
-      url = "github:IlanCosman/tide/v6.0.1";
-      flake = false;
-    };
     flakeParts.url = "github:hercules-ci/flake-parts";
     fps = {
       url = "github:wamserma/flake-programs-sqlite";
@@ -33,10 +25,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nur.url = "github:nix-community/nur";
-    rustOverlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     tokyonight = {
       url = "github:stronk-dev/Tokyo-Night-Linux";
       flake = false;

@@ -2,28 +2,41 @@
   self,
   config,
   pkgs,
+  domain,
   ...
 }: let
-  inherit (builtins) attrValues concatStringsSep;
-  inherit (self.lib) mkOption pipe types;
+  inherit (builtins) attrValues;
+  inherit (self.lib) mkIf mkOption pipe types mkDefaultEnabled;
+  inherit (self.lib.attrsets) attrByPath mapAttrs selfAndAncestorsEnabled setAttrByPath;
   inherit (self.lib.lists) flatten;
-
+  inherit (self.lib.strings) concatLines;
+  configKey = [domain "yubikey"];
   u2fAuthFile = "Yubico/u2f_keys";
+
+  cfg = attrByPath configKey {} config;
 in {
-  options.security.pam.u2f.users = mkOption {
-    type = types.attrsOf (types.listOf types.str);
-    default = {};
+  options = setAttrByPath configKey {
+    enable = mkDefaultEnabled ''
+      Enable Yubikey integration for the configured host.
+    '';
+    u2f.users = mkOption {
+      type = types.attrsOf (types.listOf types.str);
+      default = {};
+      description = "U2F tokens of authorized Yubikeys for the specified user.";
+    };
   };
-  config = {
+
+  config = mkIf (selfAndAncestorsEnabled configKey config) {
     environment.systemPackages = with pkgs; [yubikey-personalization yubikey-manager];
-    environment.etc.${u2fAuthFile}.text = pipe config.security.pam.u2f.users [
+    environment.etc.${u2fAuthFile}.text = pipe cfg.u2f.users [
+      (mapAttrs (user: tokens: map (token: "${user}:${token}") tokens))
       attrValues
       flatten
-      (concatStringsSep "\n")
+      concatLines
     ];
     security.pam = {
       u2f = {
-        authFile = "/etc/${config.environment.etc.${u2fAuthFile}.target}";
+        authFile = "/etc/${u2fAuthFile}";
         cue = true;
       };
       services = {

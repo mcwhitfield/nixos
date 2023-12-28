@@ -1,8 +1,9 @@
 {self, ...}: let
-  inherit (builtins) isAttrs listToAttrs;
+  inherit (builtins) foldl' isAttrs listToAttrs;
   inherit (self) lib;
   inherit
     (lib.attrsets)
+    attrByPath
     concatMapAttrs
     filterAttrs
     genAttrs
@@ -15,6 +16,20 @@
   inherit (lib.strings) splitString;
   inherit (lib.trivial) flip compose;
 in rec {
+  selfAndAncestorsEnabled = configPath: config:
+    (foldl' ({
+        path,
+        enabled,
+      }: name: {
+        path = path ++ [name];
+        enabled = enabled && attrByPath (path ++ [name "enabled"]) true config;
+      })
+      {
+        path = [];
+        enabled = true;
+      }
+      configPath)
+    .enabled;
   explode = sep: concatMapAttrs (k: v: setAttrByPath (splitString sep k) v);
   filterKeys = f: filterAttrs (k: _: f k);
   filterValues = f: filterAttrs (_: v: f v);

@@ -1,13 +1,21 @@
 {
   self,
+  config,
   pkgs,
+  domain,
   ...
-}: {
-  imports = with self.nixosModules; [
-    desktop-environment
-  ];
+}: let
+  inherit (self.lib) mkEnableOption mkIf;
+  inherit (self.lib.attrsets) selfAndAncestorsEnabled setAttrByPath;
+  configKey = [domain "workstation" "gnome"];
+in {
+  options = setAttrByPath configKey {
+    enable = mkEnableOption ''
+      Configure the host with a GNOME desktop environment.
+    '';
+  };
 
-  config = {
+  config = mkIf (selfAndAncestorsEnabled configKey config) {
     environment = {
       gnome.excludePackages = with pkgs; [
         gnome-photos
@@ -33,9 +41,6 @@
       ];
     };
 
-    services.xserver = {
-      displayManager.gdm.enable = true;
-      desktopManager.gnome.enable = true;
-    };
+    services.xserver.desktopManager.gnome.enable = true;
   };
 }

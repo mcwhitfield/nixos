@@ -54,6 +54,16 @@ return {
     },
     opts = {
       defaults = {
+        file_ignore_patterns = {
+          "^secrets/.$",
+          "^secrets/..$",
+          "^secrets/...$",
+          "^secrets/....$",
+          "^secrets/.*[^%.]...",
+          "^secrets/.*.[^n]..",
+          "^secrets/.*..[^i].",
+          "^secrets/.*..[^x]",
+        },
         mappings = {
           i = {
             ["<C-H>"] = "preview_scrolling_left",
