@@ -5,8 +5,8 @@
   domain,
   ...
 }: let
-  inherit (builtins) attrValues;
-  inherit (self.lib) mkIf mkOption pipe types mkDefaultEnabled;
+  inherit (builtins) attrValues filter;
+  inherit (self.lib) mkIf mkOption pipe types mkEnableOption;
   inherit (self.lib.attrsets) attrByPath mapAttrs selfAndAncestorsEnabled setAttrByPath;
   inherit (self.lib.lists) flatten;
   inherit (self.lib.strings) concatLines;
@@ -16,7 +16,7 @@
   cfg = attrByPath configKey {} config;
 in {
   options = setAttrByPath configKey {
-    enable = mkDefaultEnabled ''
+    enable = mkEnableOption ''
       Enable Yubikey integration for the configured host.
     '';
     u2f.users = mkOption {
@@ -29,7 +29,11 @@ in {
   config = mkIf (selfAndAncestorsEnabled configKey config) {
     environment.systemPackages = with pkgs; [yubikey-personalization yubikey-manager];
     environment.etc.${u2fAuthFile}.text = pipe cfg.u2f.users [
-      (mapAttrs (user: tokens: map (token: "${user}:${token}") tokens))
+      (mapAttrs (user: lines: let
+        tokens = filter (s: s != "") lines;
+        mkEntry = token: "${user}:${token}";
+      in
+        map mkEntry tokens))
       attrValues
       flatten
       concatLines

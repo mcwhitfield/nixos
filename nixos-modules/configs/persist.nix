@@ -29,20 +29,12 @@ in {
         * Auto-generated machine ID
     '';
     tmpfs = {
-      root.maxSize = mkOption {
+      maxSize = mkOption {
         type = types.str;
         default = "6G";
         description = ''
           Size of the tmpfs that will be mounted at `/`, i.e. the
           max system memory sacrificed for storage of non-persistent system files.
-        '';
-      };
-      home.maxSize = mkOption {
-        type = types.str;
-        default = "2G";
-        description = ''
-          Size of the tmpfs that will be mounted at `/home`, i.e. the
-          max system memory sacrificed for storage of non-persistent user files.
         '';
       };
     };
@@ -59,6 +51,10 @@ in {
       description = ''
         Extra files to be persisted on hosts which have Impermanence enabled.
       '';
+    };
+    manageFileSystems = mkOption {
+      type = types.bool;
+      default = true;
     };
     fileSystems = let
       filesystemOption = desc:
@@ -87,8 +83,15 @@ in {
         type = types.strMatching "/.*";
         default = "/persist";
         description = ''
-          The absolute path at which `fileSystems.root` will be mounted. Should be chosen to avoid
-          conflicts with the root filesystem, but otherwise can be any value.
+          The absolute path at which `fileSystems.root` is mounted on the host filesystem. Should be
+          chosen to avoid conflicts with the root filesystem, but otherwise can be any value.
+        '';
+      };
+      system = mkOption {
+        type = types.strMatching "/.*";
+        default = "/hosts/${config.networking.hostName}";
+        description = ''
+          The subdirectory within `mounts.root` at which the persistent data for this system is rooted.
         '';
       };
       home = mkOption {
@@ -104,7 +107,7 @@ in {
 
   config = mkIf (selfAndAncestorsEnabled configKey config) {
     environment = {
-      persistence.${cfg.mounts.root} = {
+      persistence."${cfg.mounts.root}${cfg.mounts.system}" = {
         directories =
           [
             "/var/log"
@@ -123,17 +126,12 @@ in {
           ++ cfg.files;
       };
     };
-    fileSystems = {
+    fileSystems = mkIf (cfg.manageFileSystems) {
       "/" = {
         device = "none";
         fsType = "tmpfs";
-        options = ["defaults" "size=${cfg.tmpfs.root.maxSize}" "mode=755"];
+        options = ["defaults" "size=${cfg.tmpfs.maxSize}" "mode=755"];
       };
-#      "/home" = {
-#        device = "none";
-#        fsType = "tmpfs";
-#        options = ["defaults" "size=${cfg.tmpfs.home.maxSize}" "mode=755"];
-#      };
       ${cfg.mounts.root} =
         cfg.fileSystems.persistent.root
         // {
@@ -149,7 +147,7 @@ in {
       "/boot" = cfg.fileSystems.boot // {mountPoint = "/boot";};
       "/nix" = cfg.fileSystems.nix // {mountPoint = "/nix";};
       "/etc/ssh" = {
-        device = "${cfg.mounts.root}/etc/ssh";
+        device = "${cfg.mounts.root}${cfg.mounts.system}/etc/ssh";
         neededForBoot = true;
         options = ["bind"];
       };

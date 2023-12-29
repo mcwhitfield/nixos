@@ -4,7 +4,7 @@ inputs @ {
   ...
 }: let
   inherit (builtins) filter;
-  inherit (nixpkgs.lib) path strings mkOption types;
+  inherit (nixpkgs.lib) path strings;
   inherit (strings) removeSuffix splitString;
   inherit (nixpkgs.lib.attrsets) mergeAttrsList recursiveUpdate setAttrByPath;
   inherit (nixpkgs.lib.filesystem) listFilesRecursive;
@@ -27,16 +27,7 @@ inputs @ {
     mergeAttrsList
   ];
 in
-  (pipe myLib [
+  pipe myLib [
     (recursiveUpdate nixpkgs.lib)
     (recursiveUpdate home-manager.lib)
-  ])
-  // {
-    mkDefaultEnabled = desc:
-      mkOption {
-        type = types.bool;
-        default = true;
-        example = false;
-        description = desc;
-      };
-  }
+  ]

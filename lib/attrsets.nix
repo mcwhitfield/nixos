@@ -22,7 +22,7 @@ in rec {
         enabled,
       }: name: {
         path = path ++ [name];
-        enabled = enabled && attrByPath (path ++ [name "enabled"]) true config;
+        enabled = enabled && attrByPath (path ++ [name "enable"]) true config;
       })
       {
         path = [];

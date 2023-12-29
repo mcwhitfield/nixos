@@ -6,7 +6,6 @@
   ...
 }: {
   imports = with self.nixosModules; [
-    default
     users-mark
   ];
   config = {
