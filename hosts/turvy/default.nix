@@ -34,12 +34,10 @@
           persistent.root = {
             device = "zpool/persist";
             fsType = "zfs";
-            neededForBoot = true;
           };
           persistent.home = {
             device = "zpool/persist/home";
             fsType = "zfs";
-            neededForBoot = true;
           };
         };
       };

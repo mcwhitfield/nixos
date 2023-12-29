@@ -31,7 +31,7 @@ in {
     tmpfs = {
       root.maxSize = mkOption {
         type = types.str;
-        default = "2G";
+        default = "6G";
         description = ''
           Size of the tmpfs that will be mounted at `/`, i.e. the
           max system memory sacrificed for storage of non-persistent system files.
@@ -129,15 +129,25 @@ in {
         fsType = "tmpfs";
         options = ["defaults" "size=${cfg.tmpfs.root.maxSize}" "mode=755"];
       };
-      "/home" = {
-        device = "none";
-        fsType = "tmpfs";
-        options = ["defaults" "size=${cfg.tmpfs.home.maxSize}" "mode=755"];
-      };
-      "/boot" = cfg.fileSystems.boot;
-      "/nix" = cfg.fileSystems.nix;
-      ${cfg.mounts.root} = cfg.fileSystems.persistent.root // {neededForBoot = true;};
-      ${cfg.mounts.home} = cfg.fileSystems.persistent.home // {neededForBoot = true;};
+#      "/home" = {
+#        device = "none";
+#        fsType = "tmpfs";
+#        options = ["defaults" "size=${cfg.tmpfs.home.maxSize}" "mode=755"];
+#      };
+      ${cfg.mounts.root} =
+        cfg.fileSystems.persistent.root
+        // {
+          neededForBoot = true;
+          mountPoint = cfg.mounts.root;
+        };
+      ${cfg.mounts.home} =
+        cfg.fileSystems.persistent.home
+        // {
+          neededForBoot = true;
+          mountPoint = cfg.mounts.home;
+        };
+      "/boot" = cfg.fileSystems.boot // {mountPoint = "/boot";};
+      "/nix" = cfg.fileSystems.nix // {mountPoint = "/nix";};
       "/etc/ssh" = {
         device = "${cfg.mounts.root}/etc/ssh";
         neededForBoot = true;

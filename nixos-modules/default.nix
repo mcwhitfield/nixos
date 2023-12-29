@@ -43,6 +43,7 @@ in {
       loader = {
         efi.canTouchEfiVariables = true;
         systemd-boot.enable = true;
+        systemd-boot.configurationLimit = 25;
       };
       supportedFilesystems = ["zfs"];
       tmp.useTmpfs = true;
