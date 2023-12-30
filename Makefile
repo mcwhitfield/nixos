@@ -1,14 +1,19 @@
-this: .update-commit
-	sudo nixos-rebuild switch --flake .#$$(hostname)
+hosts = turvy
+users = mark
 
-me: .update-commit
-	home-manager switch --flake .#$$(whoami)@$$(hostname)
+: $$(hostname)
 
-turvy: .update-commit
-	sudo nixos-rebuild switch --flake .#turvy
+$(hosts): %: .switch-host-%
+$(users): %: .switch-user-%
 
-mark: .update-commit
-	home-manager switch --flake .#mark@$$(hostname)
+.switch-host-%: .update-git-%
+	sudo nixos-rebuild switch --flake .#$(patsubst .switch-host-%,%,$@)
 
-.update-commit:
+.switch-user-%: .update-git-%
+	home-manager switch --flake .#$(patsubst .switch-user-%,%,$@)@(hostname)
+
+.update-git-%: .build-%
 	fish -c 'git add .; if test "$$(git log -1 --pretty=%B)" = "$$(date -I)"; git commit --amend --no-edit; else; git commit -m "$$(date -I)"; end; git push -f'
+
+.build-%:
+	sudo nixos-rebuild build --flake .#$(patsubst .build-%,%,$@)

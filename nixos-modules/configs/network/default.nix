@@ -28,6 +28,7 @@ in {
 
     services.openssh = {
       enable = true;
+      startWhenNeeded = false;
       settings = {
         PasswordAuthentication = false;
         X11Forwarding = false;

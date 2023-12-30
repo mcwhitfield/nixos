@@ -21,9 +21,13 @@ let
   perOwner = groupBy userOrHost pubkeyMatches;
   keys = mapAttrs (_: groups: map readKey groups) perOwner;
 
-  hosts = {inherit (keys) turvy;};
+  hosts = {
+    inherit (keys) turvy gitlab;
+  };
   allHosts = concatLists (attrValues hosts);
-  users = {inherit (keys) mark;};
+  users = {
+    inherit (keys) mark;
+  };
   allUsers = concatLists (attrValues users);
   allKeys = allHosts ++ allUsers;
 
@@ -48,4 +52,10 @@ in
     "secrets/firefly-iii-app".publicKeys = allKeys;
     "secrets/firefly-iii-db".publicKeys = allKeys;
     "secrets/firefly-iii-importer".publicKeys = allKeys;
+    "secrets/gitlab-db".publicKeys = allKeys;
+    "secrets/gitlab-db-pass".publicKeys = allKeys;
+    "secrets/gitlab-jws".publicKeys = allKeys;
+    "secrets/gitlab-otp".publicKeys = allKeys;
+    "secrets/gitlab-root-pass".publicKeys = allKeys;
+    "secrets/gitlab-secret".publicKeys = allKeys;
   }
