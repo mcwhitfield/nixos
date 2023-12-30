@@ -1,6 +1,5 @@
 inputs @ {
   self,
-  config,
   home-manager,
   nixosGenerators,
   domain,
@@ -9,7 +8,6 @@ inputs @ {
   imports = [
     home-manager.nixosModules.home-manager
     nixosGenerators.nixosModules.all-formats
-    self.nixosModules.secrets
     ./common.nix
     ./configs/caps2superesc.nix
     ./configs/containers.nix
@@ -20,6 +18,7 @@ inputs @ {
     ./configs/network/nat.nix
     ./configs/persist.nix
     ./configs/services/firefly-iii
+    ./configs/services/gitlab.nix
     ./configs/services/vaultwarden.nix
     ./configs/workstation
     ./configs/workstation/gdm.nix

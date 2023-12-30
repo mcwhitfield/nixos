@@ -6,7 +6,7 @@ inputs @ {
 }: let
   inherit (builtins) attrNames toString;
   inherit (self.lib) mkIf mkOption;
-  inherit (self.lib.attrsets) attrByPath mapAttrs setAttrByPath;
+  inherit (self.lib.attrsets) attrByPath mapAttrs recursiveUpdate setAttrByPath;
   inherit (self.lib.lists) findFirstIndex;
   configKey = [domain "containers"];
   cfg = attrByPath configKey {} config;
@@ -24,28 +24,21 @@ in {
         idx = findFirstIndex (n: n == name) (-1) names;
         hostIdx = 2 * idx;
         localIdx = hostIdx + 1;
-        defaults = let
-          persistRoot = config.${domain}.persist.mounts.root;
-        in {
+        defaults = {
           autoStart = true;
           ephemeral = true;
           specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
-	  enableTun = true;
+          enableTun = true;
           privateNetwork = true;
           hostAddress = "192.168.100.${toString (10 + hostIdx)}";
           localAddress = "192.168.100.${toString (10 + localIdx)}";
           hostAddress6 = "fc00::${toString hostIdx}";
           localAddress6 = "fc00::${toString localIdx}";
-          bindMounts.${persistRoot} = {
-            hostPath = persistRoot;
-            isReadOnly = false;
-          };
+          bindMounts.${config.${domain}.persist.mounts.root}.isReadOnly = false;
         };
-        finalConfig.config = {...}: {
-          imports = [self.nixosModules.container-default submodule.config];
-        };
+        finalConfig.config.imports = [self.nixosModules.container-default submodule.config];
       in
-        defaults // submodule // finalConfig;
+        (recursiveUpdate defaults submodule) // finalConfig;
     in
       mapAttrs applyDefaults cfg;
   };

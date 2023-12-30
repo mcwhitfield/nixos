@@ -1,5 +1,10 @@
-{domain, ...}: {
+{
+  self,
+  domain,
+  ...
+}: {
   imports = [
+    self.nixosModules.secrets
     ./configs/locale.nix
     ./configs/network
     ./configs/network/tailscale.nix

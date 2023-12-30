@@ -35,32 +35,21 @@ in {
   };
 
   config = mkIf (selfAndAncestorsEnabled configKey config) {
-    services.nginx.enable = true;
     ${domain} = {
-      containers.${cfg.hostName} = {
-        config = {...}: {
-          ${domain}.persist.directories = [cfg.dataDir];
-          networking = {
-            inherit (cfg) hostName;
-            firewall = {
-              enable = true;
-              allowedTCPPorts = [80];
-            };
-            useHostResolvConf = self.lib.mkForce false;
-          };
+      containers.${cfg.hostName}.config = {...}: {
+        networking.hostName = cfg.hostName;
 
-          services.nginx.enable = true;
-          services.nginx.virtualHosts.${cfg.hostName} = {
-            # forceSSL = true;
-            # enableACME = true;
-            locations."/" = {
-              proxyPass = "http://localhost:${toString cfg.port}";
-              proxyWebsockets = true;
-            };
+        ${domain}.persist.directories = [cfg.dataDir];
+        services.nginx.enable = true;
+        services.nginx.virtualHosts.${cfg.hostName} = {
+          # forceSSL = true;
+          # enableACME = true;
+          locations."/" = {
+            proxyPass = "http://localhost:${toString cfg.port}";
+            proxyWebsockets = true;
           };
-          services.resolved.enable = true;
-          services.vaultwarden.enable = true;
         };
+        services.vaultwarden.enable = true;
       };
     };
   };

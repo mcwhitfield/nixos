@@ -47,6 +47,7 @@
         hyprland.enable = true;
         defaultSession = "hyprland";
       };
+      services.gitlab.enable = true;
       services.vaultwarden.enable = true;
       services.firefly-iii = {
         enable = false;
