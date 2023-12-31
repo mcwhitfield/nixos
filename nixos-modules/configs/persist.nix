@@ -54,7 +54,7 @@ in {
     };
     manageFileSystems = mkOption {
       type = types.bool;
-      default = true;
+      default = !config.boot.isContainer;
     };
     fileSystems = let
       filesystemOption = desc:
@@ -105,52 +105,65 @@ in {
     };
   };
 
-  config = mkIf (selfAndAncestorsEnabled configKey config) {
-    environment = {
-      persistence."${cfg.mounts.root}${cfg.mounts.system}" = {
-        directories =
-          [
-            "/var/log"
-            "/var/lib/bluetooth"
-            "/var/lib/nixos"
-            "/var/lib/systemd/coredump"
-            "/etc/NetworkManager/system-connections"
-            "/etc/nixos"
-            "/etc/ssh"
-          ]
-          ++ cfg.directories;
-        files =
-          [
-            "/etc/machine-id"
-          ]
-          ++ cfg.files;
+  config = let
+    persistDir = "${cfg.mounts.root}${cfg.mounts.system}";
+  in
+    mkIf (selfAndAncestorsEnabled configKey config) {
+      environment = {
+        persistence.${persistDir} = {
+          directories =
+            [
+              "/var/log"
+              "/var/lib/bluetooth"
+              "/var/lib/nixos"
+              "/var/lib/systemd/coredump"
+              "/etc/NetworkManager/system-connections"
+              "/etc/nixos"
+            ]
+            ++ cfg.directories;
+          files =
+            [
+              "/etc/machine-id"
+              "/etc/ssh/ssh_host_ed25519_key"
+              "/etc/ssh/ssh_host_ed25519_key.pub"
+              "/etc/ssh/ssh_host_rsa_key"
+              "/etc/ssh/ssh_host_rsa_key.pub"
+            ]
+            ++ cfg.files;
+        };
+      };
+      # https://github.com/nix-community/impermanence/issues/101
+      services.openssh.hostKeys = [
+        {
+          type = "ed25519";
+          path = "${persistDir}/etc/ssh/ssh_host_ed25519_key";
+        }
+        {
+          type = "rsa";
+          bits = 4096;
+          path = "${persistDir}/etc/ssh/ssh_host_rsa_key";
+        }
+      ];
+      fileSystems = mkIf (cfg.manageFileSystems) {
+        "/" = {
+          device = "none";
+          fsType = "tmpfs";
+          options = ["defaults" "size=${cfg.tmpfs.maxSize}" "mode=755"];
+        };
+        ${cfg.mounts.root} =
+          cfg.fileSystems.persistent.root
+          // {
+            neededForBoot = true;
+            mountPoint = cfg.mounts.root;
+          };
+        ${cfg.mounts.home} =
+          cfg.fileSystems.persistent.home
+          // {
+            neededForBoot = true;
+            mountPoint = cfg.mounts.home;
+          };
+        "/boot" = cfg.fileSystems.boot // {mountPoint = "/boot";};
+        "/nix" = cfg.fileSystems.nix // {mountPoint = "/nix";};
       };
     };
-    fileSystems = mkIf (cfg.manageFileSystems) {
-      "/" = {
-        device = "none";
-        fsType = "tmpfs";
-        options = ["defaults" "size=${cfg.tmpfs.maxSize}" "mode=755"];
-      };
-      ${cfg.mounts.root} =
-        cfg.fileSystems.persistent.root
-        // {
-          neededForBoot = true;
-          mountPoint = cfg.mounts.root;
-        };
-      ${cfg.mounts.home} =
-        cfg.fileSystems.persistent.home
-        // {
-          neededForBoot = true;
-          mountPoint = cfg.mounts.home;
-        };
-      "/boot" = cfg.fileSystems.boot // {mountPoint = "/boot";};
-      "/nix" = cfg.fileSystems.nix // {mountPoint = "/nix";};
-      "/etc/ssh" = {
-        device = "${cfg.mounts.root}${cfg.mounts.system}/etc/ssh";
-        neededForBoot = true;
-        options = ["bind"];
-      };
-    };
-  };
 }

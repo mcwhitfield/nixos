@@ -16,7 +16,6 @@
     };
     services.resolved.enable = true;
     ${domain} = {
-      persist.manageFileSystems = false;
       persist.mounts.system = "/containers/${config.networking.hostName}";
     };
   };

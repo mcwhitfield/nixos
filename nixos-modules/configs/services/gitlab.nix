@@ -32,18 +32,6 @@ in {
   config = mkIf (selfAndAncestorsEnabled configKey config) {
     ${domain} = {
       containers.${cfg.hostName} = {
-        bindMounts =
-          pipe [
-            "db"
-            "db-pass"
-            "jws"
-            "otp"
-            "root-pass"
-            "secret"
-          ] [
-            (map (secret: config.age.secrets."gitlab-${secret}".path))
-            (flip genAttrs (const {isReadOnly = true;}))
-          ];
         config = {...}: {
           networking.hostName = cfg.hostName;
 

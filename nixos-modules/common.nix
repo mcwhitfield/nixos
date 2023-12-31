@@ -6,7 +6,7 @@
   imports = [
     self.nixosModules.secrets
     ./configs/locale.nix
-    ./configs/network
+    ./configs/network/default.nix
     ./configs/network/tailscale.nix
     ./configs/nix.nix
     ./configs/persist.nix

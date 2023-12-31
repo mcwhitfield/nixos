@@ -50,7 +50,7 @@
       services.gitlab.enable = true;
       services.vaultwarden.enable = true;
       services.firefly-iii = {
-        enable = false;
+        enable = true;
         app.secrets.source = config.age.secrets."firefly-iii-app".path;
         app.settings.siteOwner = config.home-manager.users.mark.accounts.email.accounts.mark.address;
         db.secrets.source = config.age.secrets."firefly-iii-db".path;

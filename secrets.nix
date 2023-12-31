@@ -36,13 +36,9 @@ let
     mkKv = groups: let
       owner = userOrHost groups;
       ownerKeys = keys.${owner};
-      otherKeys =
-        if users ? ${owner}
-        then allHosts
-        else allUsers;
     in {
       name = "secrets/ssh-${owner}-${label groups}";
-      value = {publicKeys = ownerKeys ++ otherKeys;};
+      value = {publicKeys = ownerKeys;};
     };
   in
     listToAttrs (map mkKv matches);
@@ -52,10 +48,10 @@ in
     "secrets/firefly-iii-app".publicKeys = allKeys;
     "secrets/firefly-iii-db".publicKeys = allKeys;
     "secrets/firefly-iii-importer".publicKeys = allKeys;
-    "secrets/gitlab-db".publicKeys = allKeys;
-    "secrets/gitlab-db-pass".publicKeys = allKeys;
-    "secrets/gitlab-jws".publicKeys = allKeys;
-    "secrets/gitlab-otp".publicKeys = allKeys;
-    "secrets/gitlab-root-pass".publicKeys = allKeys;
-    "secrets/gitlab-secret".publicKeys = allKeys;
+    "secrets/gitlab-db".publicKeys = keys.gitlab;
+    "secrets/gitlab-db-pass".publicKeys = keys.gitlab;
+    "secrets/gitlab-jws".publicKeys = keys.gitlab;
+    "secrets/gitlab-otp".publicKeys = keys.gitlab;
+    "secrets/gitlab-root-pass".publicKeys = keys.gitlab;
+    "secrets/gitlab-secret".publicKeys = keys.gitlab;
   }

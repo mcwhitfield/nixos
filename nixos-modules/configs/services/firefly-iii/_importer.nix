@@ -1,5 +1,8 @@
-{config, ...}: let
-  cfg = config.services.firefly-iii;
+{
+  config,
+  cfg,
+  ...
+}: let
   ociCfg = config.virtualisation.oci-containers.containers;
 in {
   # Firefly Data Importer (FIDI) configuration file
