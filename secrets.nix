@@ -11,43 +11,37 @@ let
   in
     filter (gs: !(isNull gs)) tries;
 
-  pubkeyMatches = secretsMatching "ssh-([^-]*)-(.*)\.pub";
-  userOrHost = groups: elemAt groups 0;
-  label = groups: elemAt groups 1;
+  pubkeyMatches = secretsMatching "ssh-(user|host)-(.*)-([^-]*)\.pub";
+  ownerType = groups: elemAt groups 0;
+  userOrHost = groups: elemAt groups 1;
+  label = groups: elemAt groups 2;
   readKey = groups: let
-    content = readFile ./secrets/ssh-${userOrHost groups}-${label groups}.pub;
+    content = readFile ./secrets/ssh-${ownerType groups}-${userOrHost groups}-${label groups}.pub;
   in
     replaceStrings ["\n"] [""] content;
   perOwner = groupBy userOrHost pubkeyMatches;
   keys = mapAttrs (_: groups: map readKey groups) perOwner;
-
-  hosts = {
-    inherit (keys) turvy gitlab;
-  };
-  allHosts = concatLists (attrValues hosts);
-  users = {
-    inherit (keys) mark;
-  };
-  allUsers = concatLists (attrValues users);
-  allKeys = allHosts ++ allUsers;
+  devKeys = {inherit (keys) mark;};
 
   privKeys = let
-    matches = secretsMatching "^ssh-([^-]*)-([^-.]*)$";
     mkKv = groups: let
       owner = userOrHost groups;
-      ownerKeys = keys.${owner};
+      otherReaders =
+        if (ownerType groups) == "user"
+        then []
+        else concatLists (attrValues devKeys);
     in {
-      name = "secrets/ssh-${owner}-${label groups}";
-      value = {publicKeys = ownerKeys;};
+      name = "secrets/ssh-${ownerType groups}-${owner}-${label groups}";
+      value = {publicKeys = keys.${owner} ++ otherReaders;};
     };
   in
-    listToAttrs (map mkKv matches);
+    listToAttrs (map mkKv pubkeyMatches);
 in
   privKeys
   // {
-    "secrets/firefly-iii-app".publicKeys = allKeys;
-    "secrets/firefly-iii-db".publicKeys = allKeys;
-    "secrets/firefly-iii-importer".publicKeys = allKeys;
+    "secrets/firefly-iii-app".publicKeys = keys.firefly-iii;
+    "secrets/firefly-iii-db".publicKeys = keys.firefly-iii;
+    "secrets/firefly-iii-importer".publicKeys = keys.firefly-iii;
     "secrets/gitlab-db".publicKeys = keys.gitlab;
     "secrets/gitlab-db-pass".publicKeys = keys.gitlab;
     "secrets/gitlab-jws".publicKeys = keys.gitlab;

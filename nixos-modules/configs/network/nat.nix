@@ -30,7 +30,9 @@ in {
       externalInterface = cfg.externalInterface;
       enableIPv6 = true;
       # https://github.com/NixOS/nixpkgs/issues/72580
-      extraCommands = "iptables -t nat -A POSTROUTING -o ${cfg.externalInterface} -j MASQUERADE";
+      extraCommands = ''
+        iptables -t nat -A nixos-nat-post -o ${cfg.externalInterface} -j MASQUERADE
+      '';
     };
   };
 }

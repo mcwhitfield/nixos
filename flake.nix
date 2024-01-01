@@ -6,6 +6,7 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    agenix-shell.url = "github:aciceri/agenix-shell";
     caps2superesc.url = "git+ssh://git@github.com/mcwhitfield/caps2superesc";
     ezConfigs.url = "github:ehllie/ez-configs";
     flakeParts.url = "github:hercules-ci/flake-parts";
@@ -42,6 +43,7 @@
   outputs = inputs @ {
     self,
     agenix,
+    agenix-shell,
     caps2superesc,
     ezConfigs,
     flakeParts,

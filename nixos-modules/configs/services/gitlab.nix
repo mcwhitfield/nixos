@@ -5,8 +5,7 @@
   ...
 }: let
   inherit (self.lib) mkEnableOption mkOption mkIf types;
-  inherit (self.lib.attrsets) attrByPath genAttrs selfAndAncestorsEnabled setAttrByPath;
-  inherit (self.lib.trivial) const flip pipe;
+  inherit (self.lib.attrsets) attrByPath selfAndAncestorsEnabled setAttrByPath;
   configKey = [domain "services" "gitlab"];
   cfg = attrByPath configKey {} config;
 in {
@@ -27,19 +26,39 @@ in {
         Hostname of the container (locally, on the privateNetwork, and on the tailnet).
       '';
     };
+    user = mkOption {
+      type = types.str;
+      default = "gitlab";
+      description = ''
+        The user that Gitlab services will run as.
+      '';
+    };
   };
 
   config = mkIf (selfAndAncestorsEnabled configKey config) {
-    ${domain} = {
-      containers.${cfg.hostName} = {
-        config = {...}: {
+    ${domain}.containers.${cfg.hostName} = {
+      config = let
+        hostConfig = config;
+      in
+        {config, ...}: {
+          ${domain} = {
+            persist.directories = [config.services.gitlab.statePath];
+            secrets = {
+              "gitlab-db".owner = cfg.user;
+              "gitlab-db-pass".owner = cfg.user;
+              "gitlab-jws".owner = cfg.user;
+              "gitlab-otp".owner = cfg.user;
+              "gitlab-root-pass".owner = cfg.user;
+              "gitlab-secret".owner = cfg.user;
+            };
+          };
           networking.hostName = cfg.hostName;
 
           services.gitlab = {
             enable = true;
             host = cfg.hostName;
             port = cfg.port;
-            initialRootEmail = config.home-manager.users.mark.accounts.email.accounts.mark.address;
+            initialRootEmail = hostConfig.home-manager.users.mark.accounts.email.accounts.mark.address;
             databasePasswordFile = config.age.secrets."gitlab-db-pass".path;
             initialRootPasswordFile = config.age.secrets."gitlab-root-pass".path;
             secrets = {
@@ -53,13 +72,11 @@ in {
             enable = true;
             recommendedProxySettings = true;
             virtualHosts.${cfg.hostName}.locations."/" = {
-              proxyPass = "http://localhost:${toString cfg.port}";
+              proxyPass = "http://unix:/run/${cfg.user}/gitlab-workhorse.socket";
               proxyWebsockets = true;
             };
           };
-          ${domain}.persist.directories = [config.services.gitlab.statePath];
         };
-      };
     };
   };
 }

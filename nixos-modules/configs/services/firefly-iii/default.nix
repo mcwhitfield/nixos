@@ -19,6 +19,11 @@ in {
       type = types.attrsOf types.str;
       default = {inherit service;};
     };
+    user = mkOption {
+      type = types.str;
+      default = "firefly-iii";
+      description = "User the required services will run as.";
+    };
     app = {
       containerName = mkOption {
         type = types.str;
@@ -47,7 +52,6 @@ in {
           readOnly = true;
         };
       };
-      secrets.source = mkOption {type = types.path;};
       settings = {
         staticCronToken = mkOption {
           type = types.strMatching ".{32}";
@@ -128,7 +132,6 @@ in {
           readOnly = true;
         };
       };
-      secrets.source = mkOption {type = types.path;};
       extraEnvironmentVars = mkOption {
         type = types.attrs;
         default = {};
@@ -151,7 +154,6 @@ in {
           readOnly = true;
         };
       };
-      secrets.source = mkOption {type = types.path;};
       extraEnvironmentVars = mkOption {
         type = types.attrs;
         default = {};
@@ -178,6 +180,17 @@ in {
     ${domain}.containers.firefly-iii.config = inputs @ {config, ...}: let
       ctx = inputs // {inherit cfg;};
     in {
+      ${domain} = {
+        secrets = {
+          "firefly-iii-app".owner = cfg.user;
+          "firefly-iii-db".owner = cfg.user;
+          "firefly-iii-importer".owner = cfg.user;
+        };
+        persist.directories = [
+          cfg.app.dataDir.host
+          cfg.db.dataDir.host
+        ];
+      };
       # https://raw.githubusercontent.com/firefly-iii/docker/main/docker-compose-importer.yml
       virtualisation.oci-containers.containers = mkIf cfg.enable {
         ${cfg.app.containerName} = with {c = cfg.app;}; {
@@ -186,9 +199,10 @@ in {
           hostname = c.containerName;
           volumes = ["${c.dataDir.host}:${c.dataDir.container}"];
           environment = import ./_app.nix ctx // c.extraEnvironmentVars;
-          environmentFiles = [c.secrets.source];
+          environmentFiles = [config.age.secrets."firefly-iii-app".path];
           ports = ["${toString c.port.host}:${toString c.port.container}"];
           dependsOn = [cfg.db.containerName];
+          user = cfg.user;
         };
         ${cfg.db.containerName} = with {c = cfg.db;}; {
           image = dockerhub._.mariadb.latest;
@@ -196,7 +210,8 @@ in {
           hostname = c.containerName;
           volumes = ["${c.dataDir.host}:${c.dataDir.container}"];
           environment = import ./_db.nix ctx // c.extraEnvironmentVars;
-          environmentFiles = [c.secrets.source];
+          environmentFiles = [config.age.secrets."firefly-iii-db".path];
+          user = cfg.user;
         };
         ${cfg.importer.containerName} = with {c = cfg.importer;}; {
           image = dockerhub.fireflyiii.data-importer.latest;
@@ -205,12 +220,14 @@ in {
           ports = ["${toString c.port.host}:${toString c.port.container}"];
           dependsOn = [cfg.app.containerName];
           environment = import ./_importer.nix ctx // c.extraEnvironmentVars;
-          environmentFiles = [c.secrets.source];
+          environmentFiles = [config.age.secrets."firefly-iii-importer".path];
+          user = cfg.user;
         };
         ${cfg.cron.containerName} = with {c = cfg.cron;}; {
           image = dockerhub._.alpine.latest;
           labels = cfg.labels;
           environment = c.extraEnvironmentVars;
+          user = cfg.user;
           cmd = let
             host = config.virtualisation.oci-containers.containers.${cfg.app.containerName}.hostname;
             port = toString cfg.app.port.container;
@@ -223,13 +240,14 @@ in {
           ];
         };
       };
-      ${domain}.persist.directories = [
-        cfg.app.dataDir.host
-        cfg.db.dataDir.host
-      ];
       systemd.services = {
         podman-firefly-iii-importer.serviceConfig.TimeoutStopSec = mkForce 5;
       };
+      users.users.${cfg.user} = {
+        isSystemUser = true;
+        group = cfg.user;
+      };
+      users.groups.${cfg.user} = {};
     };
   };
 }
