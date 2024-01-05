@@ -121,14 +121,20 @@ in {
               "/etc/nixos"
             ]
             ++ cfg.directories;
-          files =
-            [
-              "/etc/machine-id"
+          files = let
+            machineId =
+              if config.boot.isContainer
+              then []
+              else ["/etc/machine-id"];
+            hostKeys = [
               "/etc/ssh/ssh_host_ed25519_key"
               "/etc/ssh/ssh_host_ed25519_key.pub"
               "/etc/ssh/ssh_host_rsa_key"
               "/etc/ssh/ssh_host_rsa_key.pub"
-            ]
+            ];
+          in
+            machineId
+            ++ hostKeys
             ++ cfg.files;
         };
       };

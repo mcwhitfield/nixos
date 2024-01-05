@@ -30,6 +30,7 @@ in {
           specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
           enableTun = true;
           privateNetwork = true;
+          # hostBridge = config.${domain}.network.nat.bridgeNetwork;
           hostAddress = "192.168.100.${toString (10 + hostIdx)}";
           localAddress = "192.168.100.${toString (10 + localIdx)}";
           hostAddress6 = "fc00::${toString hostIdx}";

@@ -28,8 +28,10 @@ in {
       homeDirectory = homeDir;
       stateVersion = "23.11";
       packages = with pkgs; [
-        ranger
+        gogdl
+        heroic
         nix-output-monitor
+        ranger
         tor-browser
       ];
       keyboard.options = [
@@ -38,6 +40,7 @@ in {
         "${homeDir}/.gnupg"
         "${homeDir}/.ssh"
         "${dataHome}/keyrings"
+        "${configHome}/heroic"
       ];
     };
     programs = {

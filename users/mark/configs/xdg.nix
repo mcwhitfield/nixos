@@ -8,6 +8,7 @@ in {
     desktop
     documents
     download
+    extraConfig.XDG_GAMES_DIR
     music
     pictures
     publicShare
@@ -28,6 +29,7 @@ in {
       desktop = "${homeDir}/desktop";
       documents = "${homeDir}/documents";
       download = "${homeDir}/download";
+      extraConfig.XDG_GAMES_DIR = "${homeDir}/games";
       music = "${homeDir}/music";
       pictures = "${homeDir}/pictures";
       publicShare = "${homeDir}/public";

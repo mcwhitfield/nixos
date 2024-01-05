@@ -29,6 +29,6 @@ in {
     hardware.cpu.intel.updateMicrocode = true;
     services.physlock.lockOn.suspend = true;
     swapDevices = [];
-    ${domain}.network.nat.externalInterface = "wlp116s0";
+    ${domain}.network.nat.externalInterface = "wlp166s0";
   };
 }

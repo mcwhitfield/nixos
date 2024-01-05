@@ -48,4 +48,10 @@ in
     "secrets/gitlab-otp".publicKeys = keys.gitlab;
     "secrets/gitlab-root-pass".publicKeys = keys.gitlab;
     "secrets/gitlab-secret".publicKeys = keys.gitlab;
+    "secrets/namecheap-creds".publicKeys = with keys;
+      concatLists [
+        firefly-iii
+        gitlab
+        vaultwarden
+      ];
   }
