@@ -2,12 +2,15 @@
   self,
   config,
   domain,
+  tailnet,
   ...
 }: let
   inherit (self.lib) mkEnableOption mkOption mkIf types;
   inherit (self.lib.attrsets) attrByPath selfAndAncestorsEnabled setAttrByPath;
   configKey = [domain "services" "gitlab"];
   cfg = attrByPath configKey {} config;
+
+  subdomain = "${cfg.hostName}.${tailnet}";
 in {
   options = setAttrByPath configKey {
     enable = mkEnableOption ''
@@ -68,13 +71,18 @@ in {
               secretFile = config.age.secrets."gitlab-secret".path;
             };
           };
-          services.nginx = {
+          services.caddy = {
             enable = true;
-            recommendedProxySettings = true;
-            virtualHosts.${cfg.hostName}.locations."/" = {
-              proxyPass = "http://unix:/run/${cfg.user}/gitlab-workhorse.socket";
-              proxyWebsockets = true;
-            };
+            virtualHosts.${subdomain}.extraConfig = ''
+              reverse_proxy unix//run/${cfg.user}/gitlab-workhorse.socket
+            '';
+            virtualHosts.${cfg.hostName}.extraConfig = ''
+              reverse_proxy unix+h2c//run/${cfg.user}/gitlab-workhorse.socket {
+                transport http {
+                  versions h2c
+                }
+              }
+            '';
           };
         };
     };

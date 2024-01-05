@@ -10,8 +10,8 @@
     networking = {
       firewall = {
         enable = true;
-        allowedTCPPorts = [80];
       };
+      networkmanager.enable = false;
       useHostResolvConf = self.lib.mkForce false;
     };
     ${domain} = {

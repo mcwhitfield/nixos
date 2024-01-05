@@ -4,7 +4,7 @@ users := mark
 : $$(hostname)
 
 $(hosts): %: .update-git-%
-	sudo nixos-rebuild switch --flake .#$(patsubst .switch-host-%,%,$@)
+	sudo nixos-rebuild switch --fast --flake .#$(patsubst .switch-host-%,%,$@)
 $(users): %: .update-git-%@$$(hostname)
 	home-manager switch --flake .#$(patsubst .switch-user-%,%,$@)@$$(hostname)
 

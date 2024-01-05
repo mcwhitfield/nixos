@@ -2,12 +2,14 @@
   self,
   config,
   domain,
+  tailnet,
   ...
 }: let
   inherit (self.lib) mkEnableOption mkOption mkIf types;
   inherit (self.lib.attrsets) attrByPath selfAndAncestorsEnabled setAttrByPath;
   configKey = [domain "services" "vaultwarden"];
   cfg = attrByPath configKey {} config;
+  subdomain = "${cfg.hostName}.${tailnet}";
 in {
   options = setAttrByPath configKey {
     enable = mkEnableOption ''
@@ -39,14 +41,20 @@ in {
       containers.${cfg.hostName}.config = {...}: {
         networking.hostName = cfg.hostName;
 
-        ${domain}.persist.directories = [cfg.dataDir];
-        services.nginx.enable = true;
-        services.nginx.virtualHosts.${cfg.hostName} = {
-          # forceSSL = true;
-          # enableACME = true;
-          locations."/" = {
-            proxyPass = "http://localhost:${toString cfg.port}";
-            proxyWebsockets = true;
+        ${domain} = {
+          persist.directories = [cfg.dataDir];
+          acme.domain = subdomain;
+        };
+        services.nginx = {
+          enable = true;
+          recommendedProxySettings = true;
+          recommendedTlsSettings = true;
+          virtualHosts.${subdomain} = {
+            forceSSL = false;
+            locations."/" = {
+              proxyPass = "http://localhost:${toString cfg.port}";
+              proxyWebsockets = true;
+            };
           };
         };
         services.vaultwarden.enable = true;

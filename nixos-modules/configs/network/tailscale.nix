@@ -19,10 +19,11 @@ in {
     networking.firewall = {
       checkReversePath = "loose";
       trustedInterfaces = ["tailscale0"];
-      allowedUDPPorts = [config.services.tailscale.port];
     };
     services.tailscale = {
       enable = true;
+      openFirewall = true;
+      permitCertUid = config.services.caddy.user;
     };
   };
 }

@@ -35,7 +35,7 @@ in {
           localAddress = "192.168.100.${toString (10 + localIdx)}";
           hostAddress6 = "fc00::${toString hostIdx}";
           localAddress6 = "fc00::${toString localIdx}";
-          bindMounts.${config.${domain}.persist.mounts.root}.isReadOnly = false;
+          bindMounts."${config.${domain}.persist.mounts.root}/containers/${name}".isReadOnly = false;
         };
         finalConfig.config.imports = [self.nixosModules.container-default submodule.config];
       in

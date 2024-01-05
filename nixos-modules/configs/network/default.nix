@@ -4,7 +4,7 @@
   domain,
   ...
 }: let
-  inherit (self.lib) mkEnableOption mkIf;
+  inherit (self.lib) mkDefault mkEnableOption mkIf;
   inherit (self.lib.attrsets) selfAndAncestorsEnabled setAttrByPath;
   configKey = [domain "network"];
 in {
@@ -23,7 +23,7 @@ in {
         mkIf hasContainers {
           "podman+".allowedUDPPorts = [53];
         };
-      networkmanager.enable = true;
+      networkmanager.enable = mkDefault true;
     };
 
     services.openssh = {
