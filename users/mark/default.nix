@@ -29,10 +29,11 @@ in {
       stateVersion = "23.11";
       packages = with pkgs; [
         gogdl
-        heroic
+        lutris-free
         nix-output-monitor
         ranger
         tor-browser
+        wine
       ];
       keyboard.options = [
       ];
