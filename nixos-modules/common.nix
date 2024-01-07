@@ -12,6 +12,7 @@
     ./configs/network/tailscale.nix
     ./configs/nix.nix
     ./configs/persist.nix
+    ./configs/services/reverse-proxy.nix
   ];
 
   config.${domain} = {
