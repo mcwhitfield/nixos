@@ -1,7 +1,7 @@
 {
   self,
   pkgs,
-  config,
+  admin,
   domain,
   ...
 }: {
@@ -9,6 +9,11 @@
     users-mark
   ];
   config = {
+    boot.loader.efi.canTouchEfiVariables = true;
+    boot.loader.systemd-boot = {
+      enable = true;
+      configurationLimit = 25;
+    };
     environment.systemPackages = [pkgs.wirelesstools];
     networking.hostName = "turvy";
     networking.hostId = "30ef06a8";
@@ -47,12 +52,13 @@
         hyprland.enable = true;
         defaultSession = "hyprland";
       };
-      services.gitlab.enable = true;
-      services.vaultwarden.enable = true;
+      services.gitlab.enable = false;
+      services.vaultwarden.enable = false;
       services.firefly-iii = {
         enable = true;
-        app.settings.siteOwner = config.home-manager.users.mark.accounts.email.accounts.mark.address;
+        app.settings.siteOwner = admin;
       };
+      users.mark.enable = true;
       yubikey.enable = true;
     };
   };

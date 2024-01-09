@@ -8,7 +8,10 @@
     };
     agenix-shell.url = "github:aciceri/agenix-shell";
     caps2superesc.url = "git+ssh://git@github.com/mcwhitfield/caps2superesc";
-    ezConfigs.url = "github:ehllie/ez-configs";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flakeParts.url = "github:hercules-ci/flake-parts";
     fps = {
       url = "github:wamserma/flake-programs-sqlite";
@@ -25,6 +28,7 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixosHardware.url = "github:nixos/nixos-hardware";
     nur.url = "github:nix-community/nur";
     tokyonight = {
       url = "github:stronk-dev/Tokyo-Night-Linux";
@@ -52,33 +56,50 @@
     rustOverlay,
     ...
   }: let
+    inherit (builtins) baseNameOf listToAttrs;
+    inherit (nixpkgs.lib) nixosSystem;
+    inherit (nixpkgs.lib.strings) removeSuffix;
     constants = import ./inputs/constants.nix;
     dockerhub = import ./inputs/dockerhub.nix;
     ctx = inputs // constants // dockerhub;
+
+    mkConf = m: {
+      name = removeSuffix ".nix" (baseNameOf m);
+      value = nixosSystem {
+        modules = [m ./nixos-modules];
+        specialArgs = ctx;
+      };
+    };
+    mkNixosConfigs = ms: listToAttrs (map mkConf ms);
   in
     flakeParts.lib.mkFlake {inherit inputs;} {
-      imports = [
-        ezConfigs.flakeModule
-      ];
-
       systems = [
         "x86_64-linux"
+        "aarch64-linux"
       ];
 
-      ezConfigs = {
-        root = ./.;
-        globalArgs = ctx;
-        home.configurationsDirectory = ./users;
-        home.modulesDirectory = ./home-modules;
-        nixos.configurationsDirectory = ./hosts;
-        nixos.modulesDirectory = ./nixos-modules;
-      };
-
       flake = {
+        images = {
+          rpi-bootstrap = self.nixosConfigurations.rpi-bootstrap.config.system.build.sdImage;
+        };
         lib = import ./lib ctx;
-        nixosModules.secrets = ./secrets/nixos.nix;
-        nixosModules.users-mark = ./users/mark/nixos.nix;
-        homeManagerModules.secrets = ./secrets/home-manager.nix;
+        nixosConfigurations = mkNixosConfigs [
+          ./hosts/turvy
+          ./hosts/rpi-0-0.nix
+          ./hosts/rpi-bootstrap.nix
+        ];
+        nixosModules = {
+          default = ./nixos-modules/default.nix;
+          container-default = ./nixos-modules/container-default.nix;
+          common = ./nixos-modules/common.nix;
+          rpi = ./nixos-modules/rpi.nix;
+          secrets = ./secrets/nixos.nix;
+          users-mark = ./users/mark/nixos.nix;
+        };
+        homeModules = {
+          default = ./home-modules;
+          secrets = ./secrets/home-manager.nix;
+        };
       };
 
       perSystem = {

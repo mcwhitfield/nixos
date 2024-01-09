@@ -1,7 +1,10 @@
 inputs @ {
   self,
+  config,
+  pkgs,
   home-manager,
   nixosGenerators,
+  disko,
   domain,
   ...
 }: let
@@ -12,6 +15,7 @@ inputs @ {
   inherit (self.lib.trivial) pipe;
 in {
   imports = flatten [
+    disko.nixosModules.disko
     home-manager.nixosModules.home-manager
     nixosGenerators.nixosModules.all-formats
     ./common.nix
@@ -28,14 +32,15 @@ in {
     system.stateVersion = "23.11";
 
     boot = {
-      loader = {
-        efi.canTouchEfiVariables = true;
-        systemd-boot.enable = true;
-        systemd-boot.configurationLimit = 25;
-      };
+      kernelPackages = self.lib.mkForce config.boot.zfs.package.latestCompatibleLinuxPackages;
+      initrd.availableKernelModules = ["zfs"];
       supportedFilesystems = ["zfs"];
       tmp.useTmpfs = true;
     };
+
+    environment.systemPackages = [
+      disko.packages.${pkgs.stdenv.hostPlatform.system}.disko
+    ];
 
     home-manager = {
       useGlobalPkgs = true;

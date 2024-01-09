@@ -23,7 +23,7 @@ in {
         gnome.cheese
         gnome.gnome-music
         gnome.gnome-terminal
-        gnome.gedit
+        gedit
         gnome.epiphany
         gnome.geary
         gnome.evince

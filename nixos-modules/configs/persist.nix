@@ -28,16 +28,6 @@ in {
         * SSH config
         * Auto-generated machine ID
     '';
-    tmpfs = {
-      maxSize = mkOption {
-        type = types.str;
-        default = "6G";
-        description = ''
-          Size of the tmpfs that will be mounted at `/`, i.e. the
-          max system memory sacrificed for storage of non-persistent system files.
-        '';
-      };
-    };
     directories = mkOption {
       type = types.listOf (types.strMatching "/.*");
       default = [];
@@ -54,7 +44,7 @@ in {
     };
     manageFileSystems = mkOption {
       type = types.bool;
-      default = !config.boot.isContainer;
+      default = !config.boot.isContainer && !config.${domain}.disko.enable;
     };
     fileSystems = let
       filesystemOption = desc:
@@ -154,7 +144,7 @@ in {
         "/" = {
           device = "none";
           fsType = "tmpfs";
-          options = ["defaults" "size=${cfg.tmpfs.maxSize}" "mode=755"];
+          options = ["defaults" "size=6G" "mode=755"];
         };
         ${cfg.mounts.root} =
           cfg.fileSystems.persistent.root

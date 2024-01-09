@@ -28,14 +28,8 @@ in {
       homeDirectory = homeDir;
       stateVersion = "23.11";
       packages = with pkgs; [
-        gogdl
-        lutris-free
         nix-output-monitor
         ranger
-        tor-browser
-        wine
-      ];
-      keyboard.options = [
       ];
       persistDirs = with config.xdg; [
         "${homeDir}/.gnupg"

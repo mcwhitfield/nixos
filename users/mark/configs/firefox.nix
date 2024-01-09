@@ -1,8 +1,13 @@
 {
+  self,
+  pkgs,
+  domain,
   config,
+  osConfig,
   nur,
   ...
 }: let
+  inherit (self.lib) mkIf;
   inherit (config.lib.file) mkOutOfStoreSymlink;
   extensions = with config.nur.repos.rycee.firefox-addons; {
     "{446900e4-71c2-419f-a6a7-df9c091e268b}" = bitwarden;
@@ -18,8 +23,9 @@ in {
   imports = [
     nur.hmModules.nur
   ];
-  config = {
+  config = mkIf (osConfig.${domain}.workstation.enable) {
     home.persistDirs = [configDir];
+    home.packages = [pkgs.tor-browser];
     xdg.configFile."mozilla".source = mkOutOfStoreSymlink configDir;
     programs.firefox = {
       enable = true;

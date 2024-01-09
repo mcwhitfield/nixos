@@ -4,7 +4,7 @@
   nixosRoot,
   ...
 }: {
-  imports = with self.homeManagerModules; [
+  imports = with self.homeModules; [
     secrets
   ];
 

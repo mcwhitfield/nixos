@@ -2,7 +2,9 @@
   self,
   domain,
   ...
-}: {
+}: let
+  inherit (self.lib) mkDefault;
+in {
   imports = [
     self.nixosModules.secrets
     ./configs/acme.nix
@@ -16,11 +18,11 @@
   ];
 
   config.${domain} = {
-    locale.enable = true;
-    network.enable = true;
-    network.cloudflare-dns.enable = true;
-    network.tailscale.enable = true;
-    nix.enable = true;
-    persist.enable = true;
+    locale.enable = mkDefault true;
+    network.enable = mkDefault true;
+    network.cloudflare-dns.enable = mkDefault true;
+    network.tailscale.enable = mkDefault true;
+    nix.enable = mkDefault true;
+    persist.enable = mkDefault true;
   };
 }

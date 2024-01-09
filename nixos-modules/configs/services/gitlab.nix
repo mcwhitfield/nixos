@@ -1,6 +1,7 @@
 {
   self,
   config,
+  admin,
   domain,
   ...
 }: let
@@ -8,8 +9,6 @@
   inherit (self.lib.attrsets) attrByPath selfAndAncestorsEnabled setAttrByPath;
   configKey = [domain "services" "gitlab"];
   cfg = attrByPath configKey {} config;
-
-  hostConfig = config;
 in {
   options = setAttrByPath configKey {
     enable = mkEnableOption ''
@@ -49,7 +48,7 @@ in {
 
         services.gitlab = {
           enable = true;
-          initialRootEmail = hostConfig.home-manager.users.mark.accounts.email.accounts.mark.address;
+          initialRootEmail = admin;
           databasePasswordFile = config.age.secrets."gitlab-db-pass".path;
           initialRootPasswordFile = config.age.secrets."gitlab-root-pass".path;
           secrets = {
