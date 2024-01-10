@@ -51,6 +51,7 @@ in {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                mountOptions = ["fmask=0077" "dmask=0077"];
               };
             };
             zfs = {
@@ -73,7 +74,6 @@ in {
           keyformat = "passphrase";
           keylocation = "file:///tmp/secret.key";
           canmount = "off";
-          mountpoint = "none";
         };
         postCreateHook = ''
           zfs set keylocation="prompt" "${pool}";
@@ -81,8 +81,9 @@ in {
         datasets = let
           volume = mountpoint: {
             type = "zfs_fs";
+            inherit mountpoint;
             options = {
-              inherit mountpoint;
+              canmount = "on";
               "com.sun:auto-snapshot" = "true";
             };
           };

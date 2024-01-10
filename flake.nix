@@ -49,11 +49,9 @@
     agenix,
     agenix-shell,
     caps2superesc,
-    ezConfigs,
     flakeParts,
     nixpkgs,
     nur,
-    rustOverlay,
     ...
   }: let
     inherit (builtins) baseNameOf listToAttrs;

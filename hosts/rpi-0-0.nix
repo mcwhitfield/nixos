@@ -1,11 +1,9 @@
 {
   self,
   domain,
-  nixosHardware,
   ...
 }: {
   imports = with self.nixosModules; [
-    nixosHardware.nixosModules.raspberry-pi-4
     rpi
     users-mark
   ];
@@ -24,7 +22,7 @@
         cluster = 0;
         node = 0;
       };
-      services.vaultwarden.enable = false;
+      services.vaultwarden.enable = true;
       users.mark.enable = true;
     };
   };

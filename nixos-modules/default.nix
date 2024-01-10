@@ -36,6 +36,8 @@ in {
       initrd.availableKernelModules = ["zfs"];
       supportedFilesystems = ["zfs"];
       tmp.useTmpfs = true;
+      zfs.extraPools = ["zpool-${config.networking.hostName}"];
+      zfs.devNodes = "/dev/disk/by-partuuid";
     };
 
     environment.systemPackages = [

@@ -25,18 +25,10 @@ in {
   };
 
   config = mkIf (selfAndAncestorsEnabled configKey config) {
-    console.enable = false;
     environment.systemPackages = with pkgs; [
       libraspberrypi
       raspberrypi-eeprom
     ];
-    hardware = {
-      raspberry-pi."4".apply-overlays-dtmerge.enable = true;
-      deviceTree = {
-        enable = true;
-        filter = "*rpi-4-*.dtb";
-      };
-    };
     networking = {
       hostName = "rpi-${toString cfg.cluster}-${toString cfg.node}";
       networkmanager.enable = false;
@@ -47,16 +39,15 @@ in {
 
     boot = {
       initrd = {
-        systemd.enable = true;
-        systemd.initrdBin = [pkgs.zfs];
+        availableKernelModules = [
+          "usbhid"
+          "usb_storage"
+          "vc4"
+          "pcie_brcmstb"
+          "reset-raspberrypi"
+        ];
         network = {
           enable = true;
-          postCommands = ''
-            # Import all pools
-            zpool import -a
-            # Add the load-key command to the .profile
-            echo "zfs load-key -a; killall zfs" >> /root/.profile
-          '';
           ssh = {
             enable = true;
             port = 2222;

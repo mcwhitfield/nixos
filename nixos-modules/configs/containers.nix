@@ -17,7 +17,9 @@ in {
   });
 
   config = {
-    ${domain}.network.nat = mkIf (cfg != {}) {enable = true;};
+    ${domain} = {
+      network.nat = mkIf (cfg != {}) {enable = true;};
+    };
     containers = let
       names = attrNames cfg;
       applyDefaults = name: submodule: let
