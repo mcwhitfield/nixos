@@ -31,12 +31,12 @@ in {
     system.stateVersion = "23.11";
 
     boot = {
-      # kernelPackages = self.lib.mkForce config.boot.zfs.package.latestCompatibleLinuxPackages;
+      kernelPackages = self.lib.mkForce config.boot.zfs.package.latestCompatibleLinuxPackages;
       initrd.availableKernelModules = ["zfs"];
       supportedFilesystems = ["zfs"];
       tmp.useTmpfs = true;
       zfs.extraPools = ["zpool-${config.networking.hostName}"];
-      zfs.devNodes = "/dev/disk/by-path";
+      zfs.devNodes = "/dev/disk/by-id";
     };
 
     environment.systemPackages = [
