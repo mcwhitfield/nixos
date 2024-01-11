@@ -71,6 +71,7 @@ in {
           "vc4"
           "pcie_brcmstb"
           "reset-raspberrypi"
+          "xhci_pci"
         ];
         network = {
           enable = true;
