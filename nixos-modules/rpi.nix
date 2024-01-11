@@ -56,6 +56,7 @@ in {
     hardware.bluetooth.enable = false;
 
     boot = {
+      kernelPackages = pkgs.linuxPackages_rpi4;
       loader = {
         efi.canTouchEfiVariables = true;
         generic-extlinux-compatible.enable = false;
