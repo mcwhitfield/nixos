@@ -10,13 +10,10 @@
 
   config = {
     networking.hostId = "bde4503c";
-    boot.loader.efi.canTouchEfiVariables = true;
-    boot.loader.generic-extlinux-compatible.enable = false;
-    boot.loader.systemd-boot.enable = true;
     boot.initrd.network.ssh.hostKeys = [./tmp-host-key];
     ${domain} = {
       network.nat.externalInterface = "end0";
-      disko.disk = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_1TB_S5RRNF0W311527E";
+      disko.disk = "/dev/disk/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usbv3-0:1:1.0-scsi-0:0:0:0";
       rpi = {
         enable = true;
         cluster = 0;

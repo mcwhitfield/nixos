@@ -37,7 +37,7 @@ in {
       supportedFilesystems = ["zfs"];
       tmp.useTmpfs = true;
       zfs.extraPools = ["zpool-${config.networking.hostName}"];
-      zfs.devNodes = "/dev/disk/by-partuuid";
+      zfs.devNodes = "/dev/disk/by-path";
     };
 
     environment.systemPackages = [
