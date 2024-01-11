@@ -55,6 +55,7 @@ in {
     };
 
     boot = {
+      kernelModules = ["hns3"];
       loader = {
         efi.canTouchEfiVariables = true;
         generic-extlinux-compatible.enable = false;
@@ -68,6 +69,7 @@ in {
           "uas"
           "xhci_pci"
         ];
+        kernelModules = ["hns3"];
         network = {
           enable = true;
           ssh = {
