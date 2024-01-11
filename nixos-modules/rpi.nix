@@ -69,8 +69,12 @@ in {
           "usbhid"
           "usb_storage"
           "vc4"
+          "mmc_core"
+          "mmc_block"
           "pcie_brcmstb"
           "reset-raspberrypi"
+          "sdhci"
+          "sdhci-pci"
           "xhci_pci"
         ];
         network = {
