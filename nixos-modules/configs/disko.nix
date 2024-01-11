@@ -94,5 +94,7 @@ in {
         };
       };
     };
+    fileSystems."/persist".neededForBoot = true;
+    fileSystems."/persist/home".neededForBoot = true;
   };
 }
