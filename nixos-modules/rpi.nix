@@ -55,6 +55,7 @@ in {
     };
     hardware = {
       raspberry-pi."4".apply-overlays-dtmerge.enable = true;
+      raspberry-pi."4".xhci.enable = true;
       deviceTree = {
         enable = true;
         filter = "*rpi-4-*.dtb";
