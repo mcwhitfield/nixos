@@ -31,7 +31,6 @@ in {
     system.stateVersion = "23.11";
 
     boot = {
-      kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
       initrd.availableKernelModules = ["zfs"];
       supportedFilesystems = ["zfs"];
       tmp.useTmpfs = true;

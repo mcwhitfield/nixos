@@ -53,14 +53,6 @@ in {
     nixpkgs = {
       hostPlatform = "aarch64-linux";
     };
-    hardware = {
-      raspberry-pi."4".apply-overlays-dtmerge.enable = true;
-      raspberry-pi."4".xhci.enable = true;
-      deviceTree = {
-        enable = true;
-        filter = "*rpi-4-*.dtb";
-      };
-    };
 
     boot = {
       loader = {
@@ -72,16 +64,8 @@ in {
         };
       };
       initrd = {
-        kernelModules = [
-          "usbhid"
-          "usb_storage"
-          "vc4"
-          "mmc_core"
-          "mmc_block"
-          "pcie_brcmstb"
-          "reset-raspberrypi"
-          "sdhci"
-          "sdhci-pci"
+        availableKernelModules = [
+          "uas"
           "xhci_pci"
         ];
         network = {
