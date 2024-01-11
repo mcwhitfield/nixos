@@ -15,7 +15,6 @@ inputs @ {
   inherit (self.lib.trivial) pipe;
 in {
   imports = flatten [
-    disko.nixosModules.disko
     home-manager.nixosModules.home-manager
     nixosGenerators.nixosModules.all-formats
     ./common.nix

@@ -19,7 +19,7 @@ in {
 
   config = {
     ${domain} = {
-      disko.extraPools = mapAttrsToList (name: _: persistRoot name);
+      disko.extraPools = mapAttrsToList (name: _: persistRoot name) cfg;
       network.nat = mkIf (cfg != {}) {enable = true;};
     };
     containers = let

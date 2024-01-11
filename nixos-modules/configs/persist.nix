@@ -73,7 +73,7 @@ in {
     persistDir = "${cfg.mounts.root}${cfg.mounts.system}";
   in
     mkIf (selfAndAncestorsEnabled configKey config) {
-      ${domain}.disko.extraPools = [cfg.mounts.root persistDir];
+      ${domain}.disko.extraPools = [persistDir];
       environment = {
         persistence.${persistDir} = {
           directories =

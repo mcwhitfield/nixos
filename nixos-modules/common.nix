@@ -8,6 +8,7 @@ in {
   imports = [
     self.nixosModules.secrets
     ./configs/acme.nix
+    ./configs/disko.nix
     ./configs/locale.nix
     ./configs/network/cloudflare-dns.nix
     ./configs/network/default.nix

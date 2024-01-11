@@ -1,6 +1,7 @@
 {
   self,
   config,
+  disko,
   domain,
   ...
 }: let
@@ -11,6 +12,9 @@
   cfg = attrByPath configKey {} config;
   pool = "zpool-${config.networking.hostName}";
 in {
+  imports = [
+    disko.nixosModules.disko
+  ];
   options = setAttrByPath configKey {
     enable = mkEnableOption ''
       Enable disk partition management via Disko.
@@ -94,9 +98,11 @@ in {
             };
           };
         in
-          {nix = volume "/nix";}
+          {nix = volume "/nix";} #
           // mapToAttrs (p: nameValuePair (removePrefix "/" p) (volume p)) cfg.extraPools;
       };
     };
+    # extraPools is basically just impermanence storage, which needs neededForBoot.
+    fileSystems = mapToAttrs (p: nameValuePair p {neededForBoot = true;}) cfg.extraPools;
   };
 }
