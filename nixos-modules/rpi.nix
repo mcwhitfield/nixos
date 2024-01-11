@@ -65,7 +65,7 @@ in {
         };
       };
       initrd = {
-        availableKernelModules = [
+        kernelModules = [
           "usbhid"
           "usb_storage"
           "vc4"
