@@ -56,7 +56,7 @@ in {
     hardware.bluetooth.enable = false;
 
     boot = {
-      kernelPackages = pkgs.linuxPackages_rpi4;
+      kernelPackages = self.lib.mkForce config.boot.zfs.package.latestCompatibleLinuxPackages;
       loader = {
         efi.canTouchEfiVariables = true;
         generic-extlinux-compatible.enable = false;
