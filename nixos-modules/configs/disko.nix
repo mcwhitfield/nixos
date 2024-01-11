@@ -73,7 +73,7 @@ in {
           acltype = "posixacl";
           keyformat = "passphrase";
           keylocation = "file:///tmp/secret.key";
-          canmount = "off";
+          mountpoint = "none";
         };
         postCreateHook = ''
           zfs set keylocation="prompt" "${pool}";
@@ -83,7 +83,7 @@ in {
             type = "zfs_fs";
             inherit mountpoint;
             options = {
-              canmount = "on";
+              mountpoint = "legacy";
               "com.sun:auto-snapshot" = "true";
             };
           };
