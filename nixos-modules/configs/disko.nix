@@ -21,7 +21,7 @@ in {
     tmpfs = {
       maxSize = mkOption {
         type = types.str;
-        default = "6G";
+        default = "2G";
         description = ''
           Size of the tmpfs that will be mounted at `/`, i.e. the
           max system memory sacrificed for storage of non-persistent system files.
