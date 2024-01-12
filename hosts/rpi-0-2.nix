@@ -14,7 +14,7 @@
       cluster = 0;
       node = 2;
     };
-    services.gitlab.enable = true;
+    services.gitlab.enable = false;
     users.mark.enable = true;
   };
 }
