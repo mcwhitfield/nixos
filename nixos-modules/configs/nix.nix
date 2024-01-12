@@ -3,7 +3,6 @@
   pkgs,
   config,
   domain,
-  nixosRoot,
   ...
 }: let
   inherit (self.lib) mkIf mkEnableOption;
@@ -23,6 +22,7 @@ in {
       '';
       package = pkgs.nixFlakes;
       settings.allowed-users = ["@wheel"];
+      settings.trusted-users = ["@wheel"];
     };
     nixpkgs.config.allowUnfree = false;
   };

@@ -98,11 +98,18 @@ in {
             };
           };
         in
-          {nix = volume "/nix";} #
+          {
+            nix = volume "/nix";
+          }
           // mapToAttrs (p: nameValuePair (removePrefix "/" p) (volume p)) cfg.extraPools;
       };
     };
     # extraPools is basically just impermanence storage, which needs neededForBoot.
-    fileSystems = mapToAttrs (p: nameValuePair p {neededForBoot = true;}) cfg.extraPools;
+    fileSystems = mapToAttrs (p:
+      nameValuePair p {
+        neededForBoot = true;
+        options = ["X-mount.mode=777"];
+      })
+    cfg.extraPools;
   };
 }

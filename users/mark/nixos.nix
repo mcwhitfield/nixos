@@ -6,6 +6,7 @@
   ...
 }: let
   cfg = config.${domain}.users.mark;
+  persistRoot = "/persist/home/mark";
 in {
   options.${domain}.users.mark = {
     enable = self.lib.mkEnableOption ''
@@ -21,6 +22,7 @@ in {
   };
   config = self.lib.mkIf cfg.enable {
     ${domain} = {
+      disko.extraPools = [persistRoot];
       caps2superesc.enable = true;
       yubikey.u2f.users.mark = self.lib.filesystem.readLines ./u2f_keys;
     };

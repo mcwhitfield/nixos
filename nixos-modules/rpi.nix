@@ -42,20 +42,11 @@ in {
   };
 
   config = mkIf (selfAndAncestorsEnabled configKey config) {
-    environment.systemPackages = with pkgs; [
-      libraspberrypi
-      raspberrypi-eeprom
-    ];
-    networking = {
-      hostName = "rpi-${toString cfg.cluster}-${toString cfg.node}";
-      networkmanager.enable = false;
-    };
-    nixpkgs = {
-      hostPlatform = "aarch64-linux";
-    };
+    networking.hostName = "rpi-${toString cfg.cluster}-${toString cfg.node}";
+    networking.networkmanager.enable = false;
+    nixpkgs.hostPlatform = "aarch64-linux";
 
     boot = {
-      kernelModules = ["hns3"];
       loader = {
         efi.canTouchEfiVariables = true;
         generic-extlinux-compatible.enable = false;
@@ -69,7 +60,7 @@ in {
           "uas"
           "xhci_pci"
         ];
-        kernelModules = ["hns3"];
+        kernelModules = ["broadcom" "genet"];
         network = {
           enable = true;
           ssh = {
@@ -77,7 +68,12 @@ in {
             port = 2222;
             authorizedKeys = [config.${domain}.pubKeys."ssh-user-mark-ed25519.pub"];
           };
+          postCommands = ''
+            zpool import -a
+            echo "zfs load-key -a && killall zfs && exit" >> /root/.profile
+          '';
         };
+        preLVMCommands = "sleep 1";
       };
     };
 

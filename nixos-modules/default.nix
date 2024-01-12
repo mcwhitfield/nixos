@@ -38,8 +38,9 @@ in {
       zfs.devNodes = "/dev/disk/by-id";
     };
 
-    environment.systemPackages = [
+    environment.systemPackages = with pkgs; [
       disko.packages.${pkgs.stdenv.hostPlatform.system}.disko
+      lshw
     ];
 
     home-manager = {
@@ -49,7 +50,6 @@ in {
     };
 
     ${domain} = {
-      network.cloudflare-dns.enable = true;
       yubikey.enable = true;
     };
   };
