@@ -1,4 +1,9 @@
-{domain, ...}: {
+{
+  self,
+  domain,
+  ...
+}: {
+  imports = [self.nixosModules.rpi self.nixosModules.users-mark];
   networking.hostId = "bde4503c";
   boot.initrd.network.ssh.hostKeys = [./tmp-host-key];
   ${domain} = {

@@ -12,7 +12,7 @@
     rpi = {
       enable = true;
       cluster = 0;
-      node = 1;
+      node = 2;
     };
     services.gitlab.enable = true;
     users.mark.enable = true;
