@@ -66,6 +66,7 @@ in {
           ssh = {
             enable = true;
             port = 2222;
+            hostKeys = [/etc/ssh/ssh_host_initrd_rsa_key /etc/ssh/ssh_host_initrd_ed25519_key];
             authorizedKeys = [config.${domain}.pubKeys."ssh-user-mark-ed25519.pub"];
           };
           postCommands = ''
@@ -78,8 +79,15 @@ in {
     };
 
     ${domain} = {
+      network.nat.externalInterface = "enabcm6e4ei0";
       disko.enable = true;
       persist.enable = true;
+      persist.files = [
+        "/etc/ssh/ssh_host_initrd_rsa_key"
+        "/etc/ssh/ssh_host_initrd_rsa_key.pub"
+        "/etc/ssh/ssh_host_initrd_ed25519_key"
+        "/etc/ssh/ssh_host_initrd_ed25519_key.pub"
+      ];
     };
   };
 }

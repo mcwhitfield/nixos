@@ -16,6 +16,7 @@ in {
     ./configs/nix.nix
     ./configs/persist.nix
     ./configs/services/reverse-proxy.nix
+    ./configs/yubikey.nix
   ];
 
   config.${domain} = {
@@ -25,5 +26,6 @@ in {
     network.tailscale.enable = mkDefault true;
     nix.enable = mkDefault true;
     persist.enable = mkDefault true;
+    yubikey.enable = mkDefault true;
   };
 }
