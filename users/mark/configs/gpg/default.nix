@@ -33,7 +33,7 @@ in {
     services.gpg-agent = {
       enable = true;
       enableFishIntegration = true;
-      enableSshSupport = true;
+      enableSshSupport = false;
       pinentryFlavor = "qt";
       sshKeys = ["58794282C1DB5CE484DC83336CDC1065109E9D2B"];
     };
