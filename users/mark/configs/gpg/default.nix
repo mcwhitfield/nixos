@@ -25,7 +25,7 @@ in {
       mutableTrust = false;
       publicKeys = [
         {
-          source = ./public-key;
+          text = config.${domain}.pubKeys."gpg-mark.pub";
           trust = 5;
         }
       ];
