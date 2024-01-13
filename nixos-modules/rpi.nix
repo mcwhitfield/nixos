@@ -67,7 +67,10 @@ in {
             enable = true;
             port = 2222;
             hostKeys = [/etc/ssh/ssh_host_initrd_rsa_key /etc/ssh/ssh_host_initrd_ed25519_key];
-            authorizedKeys = [config.${domain}.pubKeys."ssh-user-mark-ed25519.pub"];
+            authorizedKeys = with config.${domain}; [
+              pubKeys."ssh-user-mark-ed25519.pub"
+              pubKeys."ssh-user-mark-yubi-1.pub"
+            ];
           };
           postCommands = ''
             zpool import -a

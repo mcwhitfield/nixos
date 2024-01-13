@@ -28,6 +28,7 @@ in {
 
     security.pam.enableSSHAgentAuth = true;
 
+    programs.ssh.startAgent = true;
     services.openssh = {
       enable = true;
       startWhenNeeded = false;

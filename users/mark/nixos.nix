@@ -37,6 +37,7 @@ in {
       openssh.authorizedKeys.keys = with config.${domain}; [
         pubKeys."ssh-user-mark-ed25519.pub"
         pubKeys."ssh-user-mark-rsa.pub"
+        pubKeys."ssh-user-mark-yubi-1.pub"
       ];
       isNormalUser = true;
       extraGroups = ["wheel" "networkmanager" "podman" "wireshark"];
