@@ -1,5 +1,6 @@
 {
   self,
+  pkgs,
   domain,
   ...
 }: let
@@ -27,5 +28,9 @@ in {
     nix.enable = mkDefault true;
     persist.enable = mkDefault true;
     yubikey.enable = mkDefault true;
+  };
+  config = {
+    boot.initrd.systemd.initrdBin = [pkgs.busybox];
+    environment.systemPackages = [pkgs.busybox];
   };
 }
