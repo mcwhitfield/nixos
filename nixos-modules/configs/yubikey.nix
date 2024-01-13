@@ -51,7 +51,7 @@ in {
     };
     services.pcscd.enable = true;
     services.udev.packages = with pkgs; [yubikey-personalization yubikey-manager];
-    services.yubikey-agent.enable = true;
-    programs.gnupg.agent.pinentryFlavor = "qt";
+    #services.yubikey-agent.enable = true;
+    #programs.gnupg.agent.pinentryFlavor = "qt";
   };
 }
