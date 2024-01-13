@@ -40,6 +40,7 @@ in {
     ];
     security.pam = {
       u2f = {
+        enable = true;
         authFile = "/etc/${u2fAuthFile}";
         cue = true;
       };
