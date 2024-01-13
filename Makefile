@@ -22,7 +22,7 @@ $(users): %: .update-git-%@$$(hostname)
 	home-manager switch --flake .#$(patsubst .switch-user-%,%,$@)@$$(hostname)
 
 .update-git-%: .build-%
-	git commit && git push -f
+	git commit && git push -f || true
 
 .build-%:
 	git add .
