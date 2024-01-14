@@ -23,7 +23,7 @@ in {
   config.${domain} = {
     locale.enable = mkDefault true;
     network.enable = mkDefault true;
-    network.cloudflare-dns.enable = mkDefault false;
+    network.resolved.enable = mkDefault false;
     network.tailscale.enable = mkDefault true;
     nix.enable = mkDefault true;
     persist.enable = mkDefault true;

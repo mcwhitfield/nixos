@@ -14,8 +14,8 @@
       networkmanager.enable = false;
       useHostResolvConf = self.lib.mkForce false;
     };
-    services.resolved.enable = true;
     ${domain} = {
+      network.resolved.enable = true;
       persist.mounts.system = "/containers/${config.networking.hostName}";
     };
   };
