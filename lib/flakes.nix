@@ -5,28 +5,36 @@
 }: let
   inherit (builtins) filter toString;
   inherit (self) lib;
-  inherit (lib) path strings;
+  inherit (lib) nixosSystem path strings;
   inherit (lib.attrsets) explode genNames mapAttrsRecursive;
   inherit (lib.filesystem) listFilesRecursive;
   inherit (lib.operators) addPrefix;
-  inherit (lib.strings) hasSuffix hyphenToCamel removeSuffix;
-  inherit (lib.trivial) compose pipe;
+  inherit (lib.strings) hasSuffix removeSuffix;
+  inherit (lib.trivial) flip compose pipe;
 in rec {
-  importWithContext = ctx: path: import path ctx;
-  listSubmodulesRecursive = dir:
+  importWithContext = flip import;
+  importSubmodulesRecursive = ctx: dir: mapSubmodulesRecursive (importWithContext ctx) dir;
+  importNixosConfigsRecursive = ctx: let
+    mkConf = m:
+      nixosSystem {
+        modules = [m ./nixos-modules];
+        specialArgs = ctx;
+      };
+  in
+    mapSubmodulesRecursive mkConf;
+  enumeratePackage = dir:
     pipe dir [
       listFilesRecursive
       (filter (hasSuffix ".nix"))
-      (filter (p: !(hasSuffix "default.nix" p)))
       (genNames (compose [
         (path.removePrefix dir)
         (strings.removePrefix "./")
         (removeSuffix ".nix")
-        hyphenToCamel
+        (removeSuffix "/default")
       ]))
       (explode "/")
     ];
-  mapSubmodulesRecursive = f: dir: mapAttrsRecursive f (listSubmodulesRecursive dir);
+  mapSubmodulesRecursive = f: dir: mapAttrsRecursive (_: v: f v) (enumeratePackage dir);
   runtimePath = hmConfig:
     compose [
       toString

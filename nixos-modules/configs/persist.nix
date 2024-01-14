@@ -1,7 +1,6 @@
 {
   self,
   config,
-  options,
   domain,
   impermanence,
   ...
@@ -115,5 +114,7 @@ in {
           path = "${persistDir}/etc/ssh/ssh_host_rsa_key";
         }
       ];
+      # Ensure /persist mounts with required ssh keys available.
+      systemd.services.agenix.after = ["basic.target"];
     };
 }

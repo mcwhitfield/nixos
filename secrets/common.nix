@@ -15,8 +15,6 @@
   configKey = [domain "secrets"];
   cfg = attrByPath configKey {} config;
 in {
-  imports = [agenix.nixosModules.default];
-
   options.${domain} = {
     pubKeys = mkOption {
       type = types.attrsOf types.str;
@@ -75,5 +73,8 @@ in {
         then conf
         else conf // {group = conf.owner;}))
     ];
+    nixpkgs.overlays = [agenix.overlays.default];
+    # Ensure /persist mounts with required ssh keys are available.
+    systemd.services.agenix.after = ["basic.target"];
   };
 }

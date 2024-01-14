@@ -5,7 +5,7 @@
   tailnet,
   ...
 }: let
-  inherit (builtins) any attrValues replaceStrings;
+  inherit (builtins) any attrValues;
   inherit (self.lib) mkIf mkOption types;
   inherit (self.lib.attrsets) attrByPath selfAndAncestorsEnabled setAttrByPath;
   configKey = [domain "services" "reverseProxy"];
