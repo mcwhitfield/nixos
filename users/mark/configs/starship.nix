@@ -12,6 +12,8 @@
         "$git_status"
         "[](fg:#394260 bg:#212736)"
         "$fill"
+        "[](fg:#394260 bg:#212736)"
+        "$hostname"
         "[](#769ff0)"
         "$nodejs"
         "$rust"
@@ -51,6 +53,11 @@
         ahead = "⇡\${count}";
         diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
         behind = "⇣\${count}";
+      };
+      hostname = {
+        ssh_only = false;
+        style = "bg:#394260";
+        format = "[[ $ssh_symbol$hostname ](fg:#769ff0 bg:#394260)]($style)";
       };
       nodejs = {
         symbol = "";

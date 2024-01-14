@@ -5,24 +5,23 @@
   domain,
   ...
 }: let
-  inherit (builtins) filterSource listToAttrs;
+  inherit (builtins) filter listToAttrs;
   inherit (self.lib) mkEnableOption mkIf mkOption types;
   inherit (self.lib.attrsets) attrByPath selfAndAncestorsEnabled setAttrByPath;
   inherit (self.lib.filesystem) listFilesRecursive;
   inherit (self.lib.strings) removePrefix;
   configKey = [domain "rpi"];
   cfg = attrByPath configKey {} config;
-  firmwareRelease = pkgs.stdenv.mkDerivation {
-    src = filterSource (path: type: baseNameOf path != "Readme.md") pkgs.fetchzip {
-      url = "https://github.com/pftf/RPi4/releases/download/v1.35/RPi4_UEFI_Firmware_v1.35.zip";
-      hash = "sha256-/eeCXVayEfkk0d5OR743djzRgRnCU1I5nJrdUoGmfUk=";
-      stripRoot = false;
-    };
+  firmwareRelease = pkgs.fetchzip {
+    url = "https://github.com/pftf/RPi4/releases/download/v1.35/RPi4_UEFI_Firmware_v1.35.zip";
+    hash = "sha256-/eeCXVayEfkk0d5OR743djzRgRnCU1I5nJrdUoGmfUk=";
+    stripRoot = false;
   };
   firmwareFiles = self.lib.pipe firmwareRelease [
     listFilesRecursive
+    (filter (p: (toString p) != "${firmwareRelease}/Readme.md"))
     (map (p: {
-      name = removePrefix "${firmwareRelease}/" (toString p);
+      name = removePrefix "${firmwareRelease}/" (builtins.unsafeDiscardStringContext p);
       value = p;
     }))
     listToAttrs
@@ -43,18 +42,9 @@ in {
   };
 
   config = mkIf (selfAndAncestorsEnabled configKey config) {
-    environment.systemPackages = with pkgs; [
-      libraspberrypi
-      raspberrypi-eeprom
-    ];
-    networking = {
-      hostName = "rpi-${toString cfg.cluster}-${toString cfg.node}";
-      networkmanager.enable = false;
-    };
-    nixpkgs = {
-      hostPlatform = "aarch64-linux";
-    };
-    hardware.bluetooth.enable = false;
+    networking.hostName = "rpi-${toString cfg.cluster}-${toString cfg.node}";
+    networking.networkmanager.enable = false;
+    nixpkgs.hostPlatform = "aarch64-linux";
 
     boot = {
       loader = {
@@ -62,31 +52,45 @@ in {
         generic-extlinux-compatible.enable = false;
         systemd-boot = {
           enable = true;
-          # extraFiles = firmwareFiles;
+          extraFiles = firmwareFiles;
         };
       };
       initrd = {
         availableKernelModules = [
-          "usbhid"
-          "usb_storage"
-          "vc4"
-          "pcie_brcmstb"
-          "reset-raspberrypi"
+          "uas"
+          "xhci_pci"
         ];
+        kernelModules = ["broadcom" "genet"];
         network = {
           enable = true;
           ssh = {
             enable = true;
             port = 2222;
-            authorizedKeys = [config.${domain}.pubKeys."ssh-user-mark-ed25519.pub"];
+            hostKeys = [/etc/ssh/ssh_host_initrd_rsa_key /etc/ssh/ssh_host_initrd_ed25519_key];
+            authorizedKeys = with config.${domain}; [
+              pubKeys."ssh-user-mark-ed25519.pub"
+              pubKeys."ssh-user-mark-yubi-1.pub"
+            ];
           };
+          postCommands = ''
+            zpool import -a
+            echo "zfs load-key -a && killall zfs && exit" >> /root/.profile
+          '';
         };
+        preLVMCommands = "sleep 1";
       };
     };
 
     ${domain} = {
+      network.nat.externalInterface = "enabcm6e4ei0";
       disko.enable = true;
       persist.enable = true;
+      persist.files = [
+        "/etc/ssh/ssh_host_initrd_rsa_key"
+        "/etc/ssh/ssh_host_initrd_rsa_key.pub"
+        "/etc/ssh/ssh_host_initrd_ed25519_key"
+        "/etc/ssh/ssh_host_initrd_ed25519_key.pub"
+      ];
     };
   };
 }

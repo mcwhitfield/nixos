@@ -3,6 +3,7 @@
   pkgs,
   config,
   osConfig,
+  domain,
   ...
 }: let
   inherit (builtins) filter;
@@ -18,6 +19,9 @@ in {
   config = {
     _module.args = {
       inherit user;
+    };
+    ${domain} = {
+      gpg.enable = true;
     };
     accounts.email.accounts.${user} = {
       address = "${user}@${osConfig.networking.domain}";

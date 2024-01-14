@@ -2,8 +2,6 @@
   self,
   pkgs,
   domain,
-  nixpkgs,
-  nixosHardware,
   ...
 }: let
   inherit (builtins) filter listToAttrs map;

@@ -40,6 +40,7 @@ in {
     ];
     security.pam = {
       u2f = {
+        enable = true;
         authFile = "/etc/${u2fAuthFile}";
         cue = true;
       };
@@ -50,5 +51,7 @@ in {
     };
     services.pcscd.enable = true;
     services.udev.packages = with pkgs; [yubikey-personalization yubikey-manager];
+    #services.yubikey-agent.enable = true;
+    #programs.gnupg.agent.pinentryFlavor = "qt";
   };
 }

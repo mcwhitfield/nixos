@@ -42,32 +42,6 @@ in {
         Extra files to be persisted on hosts which have Impermanence enabled.
       '';
     };
-    manageFileSystems = mkOption {
-      type = types.bool;
-      default = !config.boot.isContainer && !config.${domain}.disko.enable;
-    };
-    fileSystems = let
-      filesystemOption = desc:
-        mkOption {
-          type = options.fileSystems.type.nestedTypes.elemType;
-          description = desc;
-        };
-    in {
-      boot = filesystemOption ''
-        The volume partition to be used for /boot.
-      '';
-      nix = filesystemOption ''
-        The volume partition to be used for /nix.
-      '';
-      persistent = {
-        root = filesystemOption ''
-          The volume partition to be used for persistent directories/files under `/`.
-        '';
-        home = filesystemOption ''
-          The volume partition to be used for persistent directories/files under `/home`.
-        '';
-      };
-    };
     mounts = {
       root = mkOption {
         type = types.strMatching "/.*";
@@ -99,6 +73,7 @@ in {
     persistDir = "${cfg.mounts.root}${cfg.mounts.system}";
   in
     mkIf (selfAndAncestorsEnabled configKey config) {
+      ${domain}.disko.extraPools = [persistDir];
       environment = {
         persistence.${persistDir} = {
           directories =
@@ -140,26 +115,5 @@ in {
           path = "${persistDir}/etc/ssh/ssh_host_rsa_key";
         }
       ];
-      fileSystems = mkIf (cfg.manageFileSystems) {
-        "/" = {
-          device = "none";
-          fsType = "tmpfs";
-          options = ["defaults" "size=6G" "mode=755"];
-        };
-        ${cfg.mounts.root} =
-          cfg.fileSystems.persistent.root
-          // {
-            neededForBoot = true;
-            mountPoint = cfg.mounts.root;
-          };
-        ${cfg.mounts.home} =
-          cfg.fileSystems.persistent.home
-          // {
-            neededForBoot = true;
-            mountPoint = cfg.mounts.home;
-          };
-        "/boot" = cfg.fileSystems.boot // {mountPoint = "/boot";};
-        "/nix" = cfg.fileSystems.nix // {mountPoint = "/nix";};
-      };
     };
 }

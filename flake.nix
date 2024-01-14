@@ -84,6 +84,8 @@
         nixosConfigurations = mkNixosConfigs [
           ./hosts/turvy
           ./hosts/rpi-0-0.nix
+          ./hosts/rpi-0-1.nix
+          ./hosts/rpi-0-2.nix
           ./hosts/rpi-bootstrap.nix
         ];
         nixosModules = {

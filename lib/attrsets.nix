@@ -47,7 +47,7 @@ in rec {
       name = f k;
       value = v;
     });
-  mapToAttrs = f: compose [f listToAttrs];
+  mapToAttrs = f: compose [(map f) listToAttrs];
   mapValues = f: mapAttrs (_: v: f v);
   #
 }

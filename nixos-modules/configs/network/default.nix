@@ -26,6 +26,9 @@ in {
       networkmanager.enable = mkDefault true;
     };
 
+    security.pam.enableSSHAgentAuth = true;
+
+    programs.ssh.startAgent = true;
     services.openssh = {
       enable = true;
       startWhenNeeded = false;
@@ -37,7 +40,6 @@ in {
       allowSFTP = false;
       extraConfig = ''
         AllowTcpForwarding yes
-        AllowAgentForwarding no
         AllowStreamLocalForwarding no
         AuthenticationMethods publickey
       '';

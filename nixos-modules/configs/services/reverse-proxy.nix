@@ -69,11 +69,6 @@ in {
       virtualHosts.${subdomain}.extraConfig = ''
         reverse_proxy ${upstream}
       '';
-      virtualHosts.${cfg.hostName} = mkIf (cfg.upstream.port != null) {
-        extraConfig = ''
-          reverse_proxy ${replaceStrings ["https"] ["http"] upstream}
-        '';
-      };
     };
   };
 }

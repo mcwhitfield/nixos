@@ -6,10 +6,11 @@ inputs @ {
 }: let
   inherit (builtins) attrNames toString;
   inherit (self.lib) mkIf mkOption;
-  inherit (self.lib.attrsets) attrByPath mapAttrs recursiveUpdate setAttrByPath;
+  inherit (self.lib.attrsets) attrByPath mapAttrs mapAttrsToList recursiveUpdate setAttrByPath;
   inherit (self.lib.lists) findFirstIndex;
   configKey = [domain "containers"];
   cfg = attrByPath configKey {} config;
+  persistRoot = name: "${config.${domain}.persist.mounts.root}/containers/${name}";
 in {
   options = setAttrByPath configKey (mkOption {
     default = {};
@@ -18,6 +19,7 @@ in {
 
   config = {
     ${domain} = {
+      disko.extraPools = mapAttrsToList (name: _: persistRoot name) cfg;
       network.nat = mkIf (cfg != {}) {enable = true;};
     };
     containers = let
@@ -37,7 +39,7 @@ in {
           localAddress = "192.168.100.${toString (10 + localIdx)}";
           hostAddress6 = "fc00::${toString hostIdx}";
           localAddress6 = "fc00::${toString localIdx}";
-          bindMounts."${config.${domain}.persist.mounts.root}/containers/${name}".isReadOnly = false;
+          bindMounts.${persistRoot name}.isReadOnly = false;
         };
         finalConfig.config.imports = [self.nixosModules.container-default submodule.config];
       in

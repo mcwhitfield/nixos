@@ -1,15 +1,20 @@
 {
   self,
   config,
+  disko,
   domain,
   ...
 }: let
   inherit (self.lib) mkEnableOption mkIf mkOption types;
-  inherit (self.lib.attrsets) attrByPath selfAndAncestorsEnabled setAttrByPath;
+  inherit (self.lib.attrsets) attrByPath mapToAttrs nameValuePair selfAndAncestorsEnabled setAttrByPath;
+  inherit (self.lib.strings) removePrefix;
   configKey = [domain "disko"];
   cfg = attrByPath configKey {} config;
   pool = "zpool-${config.networking.hostName}";
 in {
+  imports = [
+    disko.nixosModules.disko
+  ];
   options = setAttrByPath configKey {
     enable = mkEnableOption ''
       Enable disk partition management via Disko.
@@ -21,12 +26,17 @@ in {
     tmpfs = {
       maxSize = mkOption {
         type = types.str;
-        default = "6G";
+        default = "2G";
         description = ''
           Size of the tmpfs that will be mounted at `/`, i.e. the
           max system memory sacrificed for storage of non-persistent system files.
         '';
       };
+    };
+    extraPools = mkOption {
+      type = types.listOf types.str;
+      default = [];
+      description = "Extra directories to be managed as separate ZFS pools.";
     };
   };
 
@@ -73,7 +83,7 @@ in {
           acltype = "posixacl";
           keyformat = "passphrase";
           keylocation = "file:///tmp/secret.key";
-          canmount = "off";
+          mountpoint = "none";
         };
         postCreateHook = ''
           zfs set keylocation="prompt" "${pool}";
@@ -83,16 +93,23 @@ in {
             type = "zfs_fs";
             inherit mountpoint;
             options = {
-              canmount = "on";
+              mountpoint = "legacy";
               "com.sun:auto-snapshot" = "true";
             };
           };
-        in {
-          nix = volume "/nix";
-          persist = volume "/persist";
-          "persist/home" = volume "/persist/home";
-        };
+        in
+          {
+            nix = volume "/nix";
+          }
+          // mapToAttrs (p: nameValuePair (removePrefix "/" p) (volume p)) cfg.extraPools;
       };
     };
+    # extraPools is basically just impermanence storage, which needs neededForBoot.
+    fileSystems = mapToAttrs (p:
+      nameValuePair p {
+        neededForBoot = true;
+        options = ["X-mount.mode=777"];
+      })
+    cfg.extraPools;
   };
 }

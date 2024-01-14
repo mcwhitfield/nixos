@@ -1,16 +1,19 @@
-hosts := turvy
-users := mark
+hosts := turvy rpi-0-0 rpi-0-1 rpi-0-2
 
-: $$(hostname)
+this:
+	make $$(hostname)
+all: $(hosts)
 
 $(hosts): %: .update-git-%
-	sudo nixos-rebuild switch --fast --flake .#$(patsubst .switch-host-%,%,$@)
-$(users): %: .update-git-%@$$(hostname)
-	home-manager switch --flake .#$(patsubst .switch-user-%,%,$@)@$$(hostname)
+	nixos-rebuild \
+		--target-host $@ \
+		--flake .#$@ \
+		--use-remote-sudo \
+		switch
 
 .update-git-%: .build-%
-	fish -c 'if test "$$(git log -1 --pretty=%B)" = "$$(date -I)"; git commit --amend --no-edit; else; git commit -m "$$(date -I)"; end && git push -f'
+	git commit; git push -f
 
 .build-%:
 	git add .
-	sudo nixos-rebuild build --flake .#$(patsubst .build-%,%,$@)
+	nixos-rebuild build --flake .#$(patsubst .build-%,%,$@)
