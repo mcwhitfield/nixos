@@ -5,17 +5,22 @@
   domain,
   ...
 }: let
-  inherit (self.lib) mkEnableOption mkIf;
-  inherit (self.lib.attrsets) selfAndAncestorsEnabled setAttrByPath;
+  inherit (self.lib) mkIf mkOption types;
+  inherit (self.lib.attrsets) attrByPath setAttrByPath;
   configKey = [domain "gpg"];
+  cfg = attrByPath configKey {} config;
 in {
   options = setAttrByPath configKey {
-    enable = mkEnableOption ''
-      Enable gpg-agent for SSH.
-    '';
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable gpg-agent for SSH.
+      '';
+    };
   };
 
-  config = mkIf (selfAndAncestorsEnabled configKey config) {
+  config = mkIf (cfg.enable) {
     home.persistDirs = [config.programs.gpg.homedir];
     home.packages = [pkgs.pinentry-qt];
     programs.gpg = {

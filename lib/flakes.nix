@@ -3,7 +3,7 @@
   nixosRoot,
   ...
 }: let
-  inherit (builtins) filter toString;
+  inherit (builtins) attrValues filter toString;
   inherit (self) lib;
   inherit (lib) nixosSystem path strings;
   inherit (lib.attrsets) explode genNames mapAttrsRecursive;
@@ -14,10 +14,10 @@
 in rec {
   importWithContext = flip import;
   importSubmodulesRecursive = ctx: dir: mapSubmodulesRecursive (importWithContext ctx) dir;
-  importNixosConfigsRecursive = ctx: let
+  importNixosConfigsRecursive = ctx @ {self, ...}: let
     mkConf = m:
       nixosSystem {
-        modules = [m ./nixos-modules];
+        modules = [m] ++ attrValues self.nixosModules;
         specialArgs = ctx;
       };
   in
