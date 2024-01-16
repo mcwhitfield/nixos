@@ -16,4 +16,4 @@ $(hosts): %: .update-git-%
 
 .build-%:
 	git add .
-	nixos-rebuild build --flake .#$(patsubst .build-%,%,$@)
+	nixos-rebuild build --flake .#$(patsubst .build-%,%,$@) --show-trace

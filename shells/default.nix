@@ -1,5 +1,6 @@
 {
   nixpkgs,
+  disko,
   system,
   agenix,
   ...
@@ -10,6 +11,7 @@ in
     name = "dev";
     packages = with pkgs; [
       agenix.packages.${system}.agenix
+      disko.packages.${system}.disko
       home-manager
       nixos-rebuild
       gnumake

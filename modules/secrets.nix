@@ -5,10 +5,9 @@
   agenix,
   ...
 }: let
-  inherit (builtins) baseNameOf filter listToAttrs readFile;
+  inherit (builtins) attrValues baseNameOf filter listToAttrs readFile;
   inherit (self.lib) mkOption types;
   inherit (self.lib.attrsets) attrByPath filterAttrs genAttrs' mapAttrs mapKeys nameValuePair;
-  inherit (self.lib.filesystem) listFilesRecursive;
   inherit (self.lib.strings) hasSuffix;
   inherit (self.lib.trivial) pipe;
 
@@ -22,8 +21,8 @@ in {
       type = types.attrsOf types.str;
       description = "Registered public keys in the domain.";
       readOnly = true;
-      default = pipe ./. [
-        listFilesRecursive
+      default = pipe self.secrets [
+        attrValues
         (map toString)
         (filter (hasSuffix ".pub"))
         (genAttrs' readFile)
@@ -60,8 +59,8 @@ in {
   };
 
   config = {
-    ${domain}.secrets = pipe ./. [
-      listFilesRecursive
+    ${domain}.secrets = pipe self.secrets [
+      attrValues
       (filter (f: !(hasSuffix ".nix" f)))
       (filter (f: !(hasSuffix ".pub" f)))
       (map (file: nameValuePair (baseNameOf file) {inherit file;}))
@@ -75,5 +74,8 @@ in {
         then conf
         else conf // {group = conf.owner;}))
     ];
+    nixpkgs.overlays = [agenix.overlays.default];
+    # Ensure /persist mounts with required ssh keys are available.
+    systemd.services.agenix.after = ["basic.target"];
   };
 }

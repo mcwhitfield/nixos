@@ -1,9 +1,4 @@
-{
-  self,
-  domain,
-  ...
-}: {
-  imports = [self.nixosModules.rpi self.nixosModules.users-mark];
+{domain, ...}: {
   networking.hostId = "bde4503c";
   ${domain} = {
     disko.disk = "/dev/disk/by-id/ata-Samsung_SSD_870_QVO_1TB_S5RRNF0W311527E";

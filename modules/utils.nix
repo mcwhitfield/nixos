@@ -1,26 +1,30 @@
 {
   self,
   config,
+  pkgs,
   domain,
   ...
 }: let
   inherit (self.lib) mkIf mkOption types;
   inherit (self.lib.attrsets) attrByPath setAttrByPath;
-  configKey = [domain "networking" "networkmanager"];
+  configKey = [domain "utils"];
   cfg = attrByPath configKey {} config;
 in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = ''
-        Enable NetworkManager for the system.
+        Minor utilities for system management etc.
       '';
     };
   };
 
   config = mkIf (cfg.enable) {
-    ${domain}.persist.directories = ["/etc/NetworkManager/system-connections"];
-    networking.networkmanager.enable = true;
+    boot.initrd.systemd.initrdBin = [pkgs.busybox];
+    environment.systemPackages = with pkgs; [
+      busybox
+      lshw
+    ];
   };
 }

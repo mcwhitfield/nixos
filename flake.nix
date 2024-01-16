@@ -50,15 +50,14 @@
         lib = import ./lib ctx;
 
         hosts = lib.flakes.importNixosConfigsRecursive ctx ./hosts;
-        images = lib.flakes.importSubmodulesRecursive ./images;
         modules = lib.flakes.enumeratePackage ./modules;
         home-modules = lib.flakes.enumeratePackage ./home-modules;
         users = lib.flakes.enumeratePackage ./users;
         secrets = lib.filesystem.enumerateFiles ./secrets;
 
-        nixosConfigurations = hosts;
-        nixosModules = modules;
-        homeModules = home-modules;
+        nixosConfigurations = lib.attrsets.implode "-" hosts;
+        nixosModules = lib.attrsets.implode "/" modules;
+        homeModules = lib.attrsets.implode "/" home-modules;
       };
 
       perSystem = sysCtx @ {...}: {

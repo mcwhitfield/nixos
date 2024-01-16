@@ -5,10 +5,8 @@
   impermanence,
   ...
 }: let
-  inherit (builtins) attrValues;
-  inherit (self.lib) mkIf mkOption pipe types;
-  inherit (self.lib.attrsets) attrByPath filterAttrs mapAttrs setAttrByPath;
-  inherit (self.lib.strings) hasPrefix;
+  inherit (self.lib) mkIf mkOption types;
+  inherit (self.lib.attrsets) attrByPath filterAttrs genAttrs mapAttrsToList setAttrByPath;
   configKey = [domain "persist"];
 
   cfg = attrByPath configKey {} config;
@@ -20,7 +18,7 @@ in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = ''
         Enable Impermanence integration on this host. Surfaces options for configuring the required
         filesystem layout, as well as ensuring persistence of a few key pieces of state necessary for
@@ -55,12 +53,12 @@ in {
           if config.boot.isContainer
           then []
           else ["/etc/machine-id"];
-        keys = map (k: k.path) (attrValues cfg.hostKeys);
+        keys = map (k: k.path) cfg.hostKeys;
         pubKeys = map (k: "${k}.pub") keys;
       in
         machine-id ++ keys ++ pubKeys;
     };
-    hostKeys = {
+    hostKeys = mkOption {
       type = types.listOf types.attrs;
       default = [
         {
@@ -89,36 +87,55 @@ in {
           chosen to avoid conflicts with the root filesystem, but otherwise can be any value.
         '';
       };
-      system = mkOption {
-        type = types.strMatching "/.*";
-        default = "/hosts/${config.networking.hostName}";
+      users = mkOption {
+        type = types.str;
+        default = "${cfg.mounts.root}/home";
         description = ''
-          The subdirectory within `mounts.root` at which the persistent data for this system is rooted.
+          The subdirectory within `mounts.root` at which the persistent data for this system's users
+          is rooted.
+        '';
+      };
+      containers = mkOption {
+        type = types.str;
+        default = "${cfg.mounts.root}/containers";
+        description = ''
+          The subdirectory within `mounts.root` at which the persistent data for this system's
+          hosted containers is rooted.
+        '';
+      };
+      system = mkOption {
+        type = types.str;
+        default = "${cfg.mounts.root}/hosts/${config.networking.hostName}";
+        description = ''
+          The subdirectory within `mounts.root` at which the persistent data for this system is
+          rooted.
         '';
       };
     };
   };
 
   config = let
-    persistDir = "${cfg.mounts.root}${cfg.mounts.system}";
+    roots = subdir: mapAttrsToList (name: _: "${subdir}/${name}");
+    enabledUsers = filterAttrs (_: cfg': cfg'.enable) config.${domain}.users;
+
+    userRoots = roots cfg.mounts.users enabledUsers;
+    containerRoots = roots cfg.mounts.containers config.${domain}.containers;
+
+    systemConf = {${cfg.mounts.system}.neededForBoot = true;};
+    userConfs = genAttrs userRoots (_: {
+      neededForBoot = true;
+      options = ["X-mount.mode=777"];
+    });
+    containerConfs = genAttrs containerRoots (_: {neededForBoot = true;});
   in
     mkIf (cfg.enable) {
-      ${domain}.disko.extraPools = [persistDir];
+      ${domain}.disko.extraPools = [cfg.mounts.system];
 
-      environment.persistence.${persistDir} = {
+      environment.persistence.${cfg.mounts.system} = {
         inherit (cfg) directories files;
       };
 
-      fileSystems = pipe config.fileSystems [
-        (filterAttrs (mount: _: hasPrefix cfg.mounts.root))
-        (mapAttrs (mount: _: {
-          neededForBoot = true;
-          options =
-            if (hasPrefix "${cfg.mounts.root}/home")
-            then ["X-mount.mode=777"]
-            else [];
-        }))
-      ];
+      fileSystems = systemConf // userConfs // containerConfs;
 
       # https://github.com/nix-community/impermanence/issues/101
       services.openssh = {inherit (cfg) hostKeys;};

@@ -49,7 +49,7 @@ in {
     nixpkgs.hostPlatform = "aarch64-linux";
 
     ${domain} = {
-      network.nat.externalInterface = "enabcm6e4ei0";
+      networking.nat.externalInterface = "enabcm6e4ei0";
     };
 
     boot = {

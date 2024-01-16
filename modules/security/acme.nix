@@ -12,7 +12,7 @@ in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = false; # config.services.nginx.enable;
+      default = false;
       description = ''
         Enable SSL Cert management via ACME/Let's Encrypt.
       '';

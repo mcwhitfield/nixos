@@ -9,7 +9,7 @@
   inherit (self.lib) mkOption types;
   inherit (self.lib.strings) removePrefix;
   homeDir = config.home.homeDirectory;
-  persistMount = osConfig.${domain}.persist.mounts.home;
+  persistMount = osConfig.${domain}.persist.mounts.users;
 in {
   imports = [impermanence.nixosModules.home-manager.impermanence];
 

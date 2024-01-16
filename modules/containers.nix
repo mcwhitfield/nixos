@@ -28,17 +28,21 @@ in {
         defaults = {
           autoStart = true;
           ephemeral = true;
-          specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
+
           enableTun = true;
           privateNetwork = true;
-          # hostBridge = config.${domain}.network.nat.bridgeNetwork;
           hostAddress = "192.168.100.${toString (10 + hostIdx)}";
           localAddress = "192.168.100.${toString (10 + localIdx)}";
           hostAddress6 = "fc00::${toString hostIdx}";
           localAddress6 = "fc00::${toString localIdx}";
+
           bindMounts.${persistRoot name}.isReadOnly = false;
+          specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
         };
-        finalConfig.config.imports = [self.nixosModules.container-default submodule.config];
+        finalConfig.config.imports = [
+          {${domain}.hardware.nixos-container.enable = true;}
+          submodule.config
+        ];
       in
         (recursiveUpdate defaults submodule) // finalConfig;
     in

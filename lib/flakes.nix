@@ -6,7 +6,7 @@
   inherit (builtins) attrValues filter toString;
   inherit (self) lib;
   inherit (lib) nixosSystem path strings;
-  inherit (lib.attrsets) explode genNames mapAttrsRecursive;
+  inherit (lib.attrsets) catAttrs explode genNames mapAttrsRecursive;
   inherit (lib.filesystem) listFilesRecursive;
   inherit (lib.operators) addPrefix;
   inherit (lib.strings) hasSuffix removeSuffix;
@@ -15,9 +15,18 @@ in rec {
   importWithContext = flip import;
   importSubmodulesRecursive = ctx: dir: mapSubmodulesRecursive (importWithContext ctx) dir;
   importNixosConfigsRecursive = ctx @ {self, ...}: let
-    mkConf = m:
+    mkConf = m: let
+      userModules = pipe self.users [
+        ((flip removeAttrs) ["default"])
+        attrValues
+        (catAttrs "nixos")
+      ];
+    in
       nixosSystem {
-        modules = [m] ++ attrValues self.nixosModules;
+        modules =
+          [m]
+          ++ (attrValues self.nixosModules)
+          ++ userModules;
         specialArgs = ctx;
       };
   in
@@ -30,7 +39,6 @@ in rec {
         (path.removePrefix dir)
         (strings.removePrefix "./")
         (removeSuffix ".nix")
-        (removeSuffix "/default")
       ]))
       (explode "/")
     ];

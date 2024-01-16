@@ -3,19 +3,28 @@
   config,
   domain,
   ...
-}: {
-  imports = [./common.nix];
-  config = {
-    boot.isContainer = true;
-    networking = {
-      firewall = {
-        enable = true;
-      };
-      networkmanager.enable = false;
-      useHostResolvConf = self.lib.mkForce false;
+}: let
+  inherit (self.lib) mkIf mkOption types;
+  inherit (self.lib.attrsets) attrByPath setAttrByPath;
+  configKey = [domain "hardware" "nixos-contaienr"];
+  cfg = attrByPath configKey {} config;
+in {
+  options = setAttrByPath configKey {
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable common configuration for NixOS native containers.
+      '';
     };
+  };
+
+  config = mkIf (cfg.enable) {
+    boot.isContainer = true;
+    networking.useHostResolvConf = self.lib.mkForce false;
     ${domain} = {
-      network.resolved.enable = true;
+      disko.enable = false;
+      networking.resolved.enable = true;
       persist.mounts.system = "/containers/${config.networking.hostName}";
     };
   };

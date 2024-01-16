@@ -1,6 +1,5 @@
 {
   self,
-  pkgs,
   config,
   disko,
   domain,
@@ -20,7 +19,7 @@ in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = ''
         Enable disk partition management via Disko.
       '';
@@ -47,6 +46,8 @@ in {
   };
 
   config = mkIf (cfg.enable) {
+    boot.supportedFilesystems = ["zfs"];
+    boot.tmp.useTmpfs = true;
     disko.devices = {
       nodev."/" = {
         mountpoint = "/";
@@ -110,8 +111,5 @@ in {
           // mapToAttrs (p: nameValuePair (removePrefix "/" p) (volume p)) cfg.extraPools;
       };
     };
-    environment.systemPackages = [
-      disko.packages.${pkgs.stdenv.hostPlatform.system}.disko
-    ];
   };
 }

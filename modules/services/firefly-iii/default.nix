@@ -177,9 +177,7 @@ in {
   };
 
   config = mkIf (cfg.enable) {
-    ${domain}.containers.firefly-iii.config = inputs @ {config, ...}: let
-      ctx = inputs // {inherit cfg;};
-    in {
+    ${domain}.containers.firefly-iii.config = {config, ...}: {
       ${domain} = {
         secrets = {
           "firefly-iii-app".owner = cfg.user;
@@ -237,6 +235,7 @@ in {
           ];
         };
       };
+      firewall.interfaces."podman+".allowedUDPPorts = [53];
       systemd.services = {
         podman-firefly-iii-importer.serviceConfig.TimeoutStopSec = mkForce 5;
       };

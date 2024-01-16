@@ -26,6 +26,9 @@ in {
   };
 
   config = mkIf cfg.enable {
+    ${domain} = {
+      networking.wifi.enable = true;
+    };
     environment.systemPackages = with pkgs; [pulseaudio];
     hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;

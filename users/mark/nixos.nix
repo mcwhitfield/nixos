@@ -23,9 +23,9 @@ in {
   };
   config = self.lib.mkIf cfg.enable {
     ${domain} = {
-      disko.extraPools = [persistRoot];
       caps2superesc.enable = true;
-      yubikey.u2f.users.mark = self.lib.filesystem.readLines ./u2f_keys;
+      disko.extraPools = [persistRoot];
+      security.yubikey.u2f.users.mark = self.lib.filesystem.readLines ./u2f_keys;
     };
     home-manager.users = self.lib.mkIf cfg.enableHomeManager {mark = ./default.nix;};
     programs.fish.enable = true;

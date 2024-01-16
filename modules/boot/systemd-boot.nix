@@ -6,7 +6,7 @@
 }: let
   inherit (self.lib) mkIf mkOption types;
   inherit (self.lib.attrsets) attrByPath setAttrByPath;
-  configKey = [domain "boot" "systemd"];
+  configKey = [domain "boot" "systemd-boot"];
   cfg = attrByPath configKey {} config;
 in {
   options = setAttrByPath configKey {
@@ -21,12 +21,12 @@ in {
 
   config = mkIf (cfg.enable) {
     boot.loader = {
-        efi.canTouchEfiVariables = true;
-        generic-extlinux-compatible.enable = false;
-        systemd-boot = {
-          enable = true;
-          extraFiles = firmwareFiles;
-        };
-      }
+      efi.canTouchEfiVariables = true;
+      generic-extlinux-compatible.enable = false;
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 25;
+      };
+    };
   };
 }

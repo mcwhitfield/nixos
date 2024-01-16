@@ -1,25 +1,28 @@
 {
   self,
+  pkgs,
   config,
   domain,
   ...
 }: let
   inherit (self.lib) mkIf mkOption types;
   inherit (self.lib.attrsets) attrByPath setAttrByPath;
-  configKey = [domain "networking"];
+  configKey = [domain "networking" "wifi"];
   cfg = attrByPath configKey {} config;
 in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = ''
-        Configure a standard networking setup for hosts on ${domain}.
+        Enable Wi-fi configuration & support via NetworkManager.
       '';
     };
   };
 
   config = mkIf (cfg.enable) {
-    networking.domain = domain;
+    ${domain}.persist.directories = ["/etc/NetworkManager/system-connections"];
+    environment.systemPackages = [pkgs.wirelesstools];
+    networking.networkmanager.enable = true;
   };
 }

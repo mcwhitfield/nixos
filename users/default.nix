@@ -27,10 +27,12 @@ in {
   admins =
     admins
     // {
-      emails = catAttrs ["email"] adminsList;
-      sshPubKeys = {
-        paths = catAttrs ["sshPubKeys" "paths"] adminsList;
-        texts = catAttrs ["sshPubKeys" "texts"] adminsList;
+      emails = catAttrs "email" adminsList;
+      sshPubKeys = let
+        pks = catAttrs "sshPubKeys" adminsList;
+      in {
+        paths = catAttrs "paths" pks;
+        texts = catAttrs "texts" pks;
       };
     };
 }
