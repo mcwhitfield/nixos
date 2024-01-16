@@ -16,7 +16,7 @@
         height = 40;
         modules-left = ["hyprland/workspaces" "hyprland/mode" "hyprland/window"];
         modules-center = ["clock"];
-        modules-right = ["custom/recorder" "tray" "pulseaudio" "backlight" "temperature" "cpu" "memory" "battery" "network" "custom/powermenu"];
+        modules-right = ["tray" "pulseaudio" "backlight" "temperature" "cpu" "memory" "battery" "network" "custom/powermenu"];
         "hyprland/mode" = {
           format = " {}";
         };
@@ -68,15 +68,6 @@
           interval = 3600;
           escape = true;
           on-click = "/home/marco/.config/wofi/wofi-power.sh";
-        };
-        "custom/recorder" = {
-          format = "!";
-          return-type = "json";
-          interval = 3;
-          exec = "echo '{\"class\": \"recording\"}'";
-          exec-if = "pgrep wf-recorder";
-          tooltip = false;
-          on-click = "killall -s SIGINT wf-recorder";
         };
         battery = {
           format = "<span font='Font Awesome 5 Free 11'>{icon}</span> {capacity}%{time}";

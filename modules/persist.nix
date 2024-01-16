@@ -1,5 +1,6 @@
 {
   self,
+  options,
   config,
   domain,
   impermanence,
@@ -10,6 +11,7 @@
   configKey = [domain "persist"];
 
   cfg = attrByPath configKey {} config;
+  opts = attrByPath configKey {} options;
 in {
   imports = [
     impermanence.nixosModules.impermanence
@@ -129,7 +131,11 @@ in {
     containerConfs = genAttrs containerRoots (_: {neededForBoot = true;});
   in
     mkIf (cfg.enable) {
-      ${domain}.disko.extraPools = [cfg.mounts.system];
+      ${domain} = {
+        disko.extraPools = [cfg.mounts.system];
+        persist.directories = opts.directories.default;
+        persist.files = opts.files.default;
+      };
 
       environment.persistence.${cfg.mounts.system} = {
         inherit (cfg) directories files;

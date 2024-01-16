@@ -12,7 +12,7 @@ in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = ''
         Enable Tailscale on the system, including necessary networking configs.
       '';
