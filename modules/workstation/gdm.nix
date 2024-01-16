@@ -22,7 +22,7 @@ in {
   config = mkIf (cfg.enable) {
     services.xserver.displayManager.gdm = {
       enable = true;
-      banner = config.networking.hostName;
+      banner = config.networking.fqdn;
     };
   };
 }

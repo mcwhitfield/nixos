@@ -28,6 +28,7 @@ in {
       interception-tools.enable = true;
       # Some weird-ass bug where the final systemd unit overrides its own PATH in ExecStart?
       # Can't figure out where that's coming from, it's not part of ExecStart in the Nix config.
+      # So instead we set absolute paths via IFD.
       interception-tools.udevmonConfig = let
         intercept = getExe' pkgs.interception-tools "intercept";
         uinput = getExe' pkgs.interception-tools "uinput";

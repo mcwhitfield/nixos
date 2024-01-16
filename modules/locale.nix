@@ -12,7 +12,7 @@ in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = ''
         Configure standard locale-related options.
       '';
