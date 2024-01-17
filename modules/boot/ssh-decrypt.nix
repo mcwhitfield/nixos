@@ -61,7 +61,7 @@ in {
     };
     authorizedKeys = mkOption {
       type = types.listOf types.str;
-      default = self.users.admins.sshPubKeys.texts;
+      default = config.${domain}.admins.publicKeys.texts;
       description = ''
         Synonym of boot.initrd.network.ssh.authorizedKeys with better defaults.
 
