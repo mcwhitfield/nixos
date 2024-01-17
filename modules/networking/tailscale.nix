@@ -17,6 +17,13 @@ in {
         Enable Tailscale on the system, including necessary networking configs.
       '';
     };
+    tailnet = mkOption {
+      type = types.str;
+      default = "tail19498.ts.net";
+      description = ''
+        The tailnet managing hosts on this domain.
+      '';
+    };
   };
 
   config = mkIf (cfg.enable) {

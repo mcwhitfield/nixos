@@ -1,8 +1,4 @@
-{
-  self,
-  nixosRoot,
-  ...
-}: let
+{self, ...}: let
   inherit (builtins) attrValues filter toString;
   inherit (self) lib;
   inherit (lib) nixosSystem path strings;
@@ -27,7 +23,9 @@ in rec {
           [m]
           ++ (attrValues self.nixosModules)
           ++ userModules;
-        specialArgs = ctx;
+        # `domain` in particular should be accessible as a top-level module arg since we use it
+        # everywhere. Cuts way down on line noise.
+        specialArgs = ctx // {inherit (self) domain;};
       };
   in
     mapSubmodulesRecursive mkConf;
@@ -47,7 +45,7 @@ in rec {
     compose [
       toString
       (strings.removePrefix "${self}")
-      (addPrefix nixosRoot)
+      (addPrefix hmConfig.${self.domain}.nixosRoot)
       hmConfig.lib.file.mkOutOfStoreSymlink
     ];
 }

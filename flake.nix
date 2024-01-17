@@ -35,11 +35,7 @@
     self,
     flakeParts,
     ...
-  }: let
-    constants = import ./inputs/constants.nix;
-    dockerhub = import ./inputs/dockerhub.nix;
-    ctx = inputs // constants // dockerhub;
-  in
+  }:
     flakeParts.lib.mkFlake {inherit inputs;} rec {
       systems = [
         "x86_64-linux"
@@ -47,9 +43,10 @@
       ];
 
       flake = rec {
-        lib = import ./lib ctx;
+        lib = import ./lib inputs;
 
-        hosts = lib.flakes.importNixosConfigsRecursive ctx ./hosts;
+        domain = "whitfield.one";
+        hosts = lib.flakes.importNixosConfigsRecursive inputs ./hosts;
         modules = lib.flakes.enumeratePackage ./modules;
         home-modules = lib.flakes.enumeratePackage ./home-modules;
         users = lib.flakes.enumeratePackage ./users;
@@ -61,7 +58,7 @@
       };
 
       perSystem = sysCtx @ {...}: {
-        devShells = flake.lib.flakes.importSubmodulesRecursive (ctx // sysCtx) ./shells;
+        devShells = flake.lib.flakes.importSubmodulesRecursive (inputs // sysCtx) ./shells;
       };
     };
 }

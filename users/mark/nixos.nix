@@ -2,7 +2,6 @@
   self,
   pkgs,
   config,
-  admin,
   domain,
   ...
 }: let
@@ -34,9 +33,7 @@ in {
       uid = 1000;
       shell = pkgs.fish;
       initialHashedPassword = "$6$x4Czbd9boWzFUySX$pgTJ6Twtm4l98ho8my945FtF4SYwYe.fbJqbfPzm7SqIPW/lxts400f2dgvYr4Z5ahDA866TvtLxLNlqPt7sY.";
-      openssh.authorizedPrincipals = [
-        admin
-      ];
+      openssh.authorizedPrincipals = [config.${domain}.admins.mark.email];
       openssh.authorizedKeys.keys = with config.${domain}; [
         pubKeys."ssh-user-mark-ed25519.pub"
         pubKeys."ssh-user-mark-rsa.pub"

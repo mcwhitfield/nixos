@@ -30,6 +30,11 @@ in {
         default = "${service}-app";
         readOnly = true;
       };
+      image.digest = mkOption {
+        type = types.str;
+        default = "fireflyiii/core@sha256:d7c82269538463abf34495650b06a35fccdffc99dbd3fa2f7fb80e2909dc5445";
+        description = "A Dockerhub digest identifier for the firefly-iii core docker image.";
+      };
       port = {
         host = mkOption {
           type = types.port;
@@ -110,6 +115,11 @@ in {
         default = "${service}-db";
         readOnly = true;
       };
+      image.digest = mkOption {
+        type = types.str;
+        default = "mariadb@sha256:15bd5a1891a297e2b1ad33c5fdc40846033e064a152d4cf06841bb19bf8ca46c";
+        description = "A Dockerhub digest identifier for the firefly-iii database docker image.";
+      };
       dbName = mkOption {
         type = types.str;
         default = "firefly";
@@ -143,6 +153,11 @@ in {
         default = "${service}-importer";
         readOnly = true;
       };
+      image.digest = mkOption {
+        type = types.str;
+        default = "fireflyiii/data-importer@sha256:92ae117f4dcf0dd9699f3e4dd589664b16137c7c2c7b30fd24b43f676b8c20f2";
+        description = "A Dockerhub digest identifier for the firefly-iii data importer docker image.";
+      };
       port = {
         host = mkOption {
           type = types.port;
@@ -164,6 +179,11 @@ in {
         type = types.str;
         default = "${service}-cron";
         readOnly = true;
+      };
+      image.digest = mkOption {
+        type = types.str;
+        default = "alpine@sha256:13b7e62e8df80264dbb747995705a986aa530415763a6c58f84a3ca8af9a5bcd";
+        description = "A Dockerhub digest identifier for the firefly-iii cron docker image.";
       };
       extraEnvironmentVars = mkOption {
         type = types.attrs;
@@ -192,7 +212,7 @@ in {
       # https://raw.githubusercontent.com/firefly-iii/docker/main/docker-compose-importer.yml
       virtualisation.oci-containers.containers = mkIf cfg.enable {
         ${cfg.app.containerName} = with {c = cfg.app;}; {
-          image = dockerhub.fireflyiii.core.latest;
+          image = c.image.digest;
           labels = cfg.labels;
           hostname = c.containerName;
           volumes = ["${c.dataDir.host}:${c.dataDir.container}"];
@@ -202,7 +222,7 @@ in {
           user = cfg.user;
         };
         ${cfg.db.containerName} = with {c = cfg.db;}; {
-          image = dockerhub._.mariadb.latest;
+          image = c.image.digest;
           labels = cfg.labels;
           hostname = c.containerName;
           volumes = ["${c.dataDir.host}:${c.dataDir.container}"];
@@ -210,7 +230,7 @@ in {
           user = cfg.user;
         };
         ${cfg.importer.containerName} = with {c = cfg.importer;}; {
-          image = dockerhub.fireflyiii.data-importer.latest;
+          image = c.image.digest;
           labels = cfg.labels;
           hostname = c.containerName;
           ports = ["${toString c.port.host}:${toString c.port.container}"];
@@ -219,7 +239,7 @@ in {
           user = cfg.user;
         };
         ${cfg.cron.containerName} = with {c = cfg.cron;}; {
-          image = dockerhub._.alpine.latest;
+          image = c.image.digest;
           labels = cfg.labels;
           environment = c.extraEnvironmentVars;
           user = cfg.user;
