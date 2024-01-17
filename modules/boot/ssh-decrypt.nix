@@ -5,8 +5,9 @@
   users,
   ...
 }: let
+  inherit (builtins) baseNameOf;
   inherit (self.lib) mkIf mkOption types;
-  inherit (self.lib.attrsets) attrByPath setAttrByPath;
+  inherit (self.lib.attrsets) attrByPath mapToAttrs setAttrByPath;
   configKey = [domain "boot" "ssh-decrypt"];
   cfg = attrByPath configKey {} config;
 in {
@@ -48,7 +49,9 @@ in {
     };
     hostKeys = mkOption {
       type = types.listOf types.str;
-      default = [/etc/ssh/ssh_host_initrd_rsa_key /etc/ssh/ssh_host_initrd_ed25519_key];
+      default = let
+        key = algo: "/etc/ssh/ssh-host-${config.networking.hostName}-initrd-${algo}";
+      in [(key "rsa") (key "ed25519")];
       description = ''
         Synonym of boot.initrd.network.ssh.hostKeys with better defaults.
 
@@ -70,6 +73,16 @@ in {
 
   config = mkIf (cfg.enable) {
     ${domain}.persist.files = cfg.hostKeys ++ (map (key: "${key}.pub") cfg.hostKeys);
+    age.secrets = let
+      mkSecret = path: {
+        name = baseNameOf path;
+        value = {
+          inherit path;
+          file = self.secrets.${baseNameOf path};
+        };
+      };
+    in
+      mapToAttrs mkSecret cfg.hostKeys;
     boot.initrd = {
       # This is stage 1 boot so we don't have any fancy way to be sure the network interface is
       # ready yet, so just inject a small delay to reduce issues.
