@@ -2,7 +2,6 @@
   self,
   config,
   domain,
-  users,
   ...
 }: let
   inherit (builtins) baseNameOf;
@@ -62,7 +61,7 @@ in {
     };
     authorizedKeys = mkOption {
       type = types.listOf types.str;
-      default = users.admins.sshPubKeys.texts;
+      default = self.users.admins.sshPubKeys.texts;
       description = ''
         Synonym of boot.initrd.network.ssh.authorizedKeys with better defaults.
 
