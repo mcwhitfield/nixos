@@ -25,7 +25,7 @@ in {
     ${domain} = {
       disko.enable = false;
       networking.resolved.enable = true;
-      persist.mounts.system = "/containers/${config.networking.hostName}";
+      persist.mounts.system = "${config.${domain}.persist.mounts.root}/containers/${config.networking.hostName}";
     };
   };
 }
