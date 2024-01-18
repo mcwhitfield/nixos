@@ -10,14 +10,13 @@
 in rec {
   importWithContext = flip import;
   importSubmodulesRecursive = ctx: dir: mapSubmodulesRecursive (importWithContext ctx) dir;
+  userModules = pipe self.users [
+    ((flip removeAttrs) ["default"])
+    attrValues
+    (catAttrs "nixos")
+  ];
   importNixosConfigsRecursive = ctx @ {self, ...}: let
-    mkConf = m: let
-      userModules = pipe self.users [
-        ((flip removeAttrs) ["default"])
-        attrValues
-        (catAttrs "nixos")
-      ];
-    in
+    mkConf = m:
       nixosSystem {
         modules =
           [m]
