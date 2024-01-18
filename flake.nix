@@ -2,126 +2,63 @@
   description = "Home Network";
 
   inputs = {
-    agenix = {
-      url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    agenix-shell.url = "github:aciceri/agenix-shell";
+    agenix.url = "github:ryantm/agenix";
     caps2superesc.url = "git+ssh://git@github.com/mcwhitfield/caps2superesc";
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    disko.url = "github:nix-community/disko";
     flakeParts.url = "github:hercules-ci/flake-parts";
-    fps = {
-      url = "github:wamserma/flake-programs-sqlite";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    fps.url = "github:wamserma/flake-programs-sqlite";
+    home-manager.url = "github:nix-community/home-manager";
     hyprland.url = "github:hyprwm/Hyprland";
     impermanence.url = "github:nix-community/impermanence";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixosGenerators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixosGenerators.url = "github:nix-community/nixos-generators";
     nixosHardware.url = "github:nixos/nixos-hardware";
     nur.url = "github:nix-community/nur";
-    tokyonight = {
-      url = "github:stronk-dev/Tokyo-Night-Linux";
-      flake = false;
-    };
-    wallpapers = {
-      url = "github:makccr/wallpapers";
-      flake = false;
-    };
-    wezterm = {
-      url = "github:wez/wezterm?submodules=1";
-      flake = false;
-    };
+    tokyonight.url = "github:stronk-dev/Tokyo-Night-Linux";
+    wallpapers.url = "github:makccr/wallpapers";
+    wezterm.url = "github:wez/wezterm?submodules=1";
+
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    caps2superesc.inputs.nixpkgs.follows = "nixpkgs";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    fps.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    hyprland.inputs.nixpkgs.follows = "nixpkgs";
+    nixosGenerators.inputs.nixpkgs.follows = "nixpkgs";
+
+    tokyonight.flake = false;
+    wallpapers.flake = false;
+    wezterm.flake = false;
   };
 
   outputs = inputs @ {
     self,
-    agenix,
-    agenix-shell,
-    caps2superesc,
     flakeParts,
-    nixpkgs,
-    nur,
     ...
-  }: let
-    inherit (builtins) baseNameOf listToAttrs;
-    inherit (nixpkgs.lib) nixosSystem;
-    inherit (nixpkgs.lib.strings) removeSuffix;
-    constants = import ./inputs/constants.nix;
-    dockerhub = import ./inputs/dockerhub.nix;
-    ctx = inputs // constants // dockerhub;
-
-    mkConf = m: {
-      name = removeSuffix ".nix" (baseNameOf m);
-      value = nixosSystem {
-        modules = [m ./nixos-modules];
-        specialArgs = ctx;
-      };
-    };
-    mkNixosConfigs = ms: listToAttrs (map mkConf ms);
-  in
-    flakeParts.lib.mkFlake {inherit inputs;} {
+  }:
+    flakeParts.lib.mkFlake {inherit inputs;} rec {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
       ];
 
-      flake = {
-        images = {
-          rpi-bootstrap = self.nixosConfigurations.rpi-bootstrap.config.system.build.sdImage;
-        };
-        lib = import ./lib ctx;
-        nixosConfigurations = mkNixosConfigs [
-          ./hosts/turvy
-          ./hosts/rpi-0-0.nix
-          ./hosts/rpi-0-1.nix
-          ./hosts/rpi-0-2.nix
-          ./hosts/rpi-bootstrap.nix
-        ];
-        nixosModules = {
-          default = ./nixos-modules/default.nix;
-          container-default = ./nixos-modules/container-default.nix;
-          common = ./nixos-modules/common.nix;
-          rpi = ./nixos-modules/rpi.nix;
-          secrets = ./secrets/nixos.nix;
-          users-mark = ./users/mark/nixos.nix;
-        };
-        homeModules = {
-          default = ./home-modules;
-          secrets = ./secrets/home-manager.nix;
-        };
+      flake = rec {
+        lib = import ./lib inputs;
+
+        domain = "whitfield.one";
+        hosts = lib.flakes.importNixosConfigsRecursive inputs ./hosts;
+        modules = lib.flakes.enumeratePackage ./modules;
+        home-modules = lib.flakes.enumeratePackage ./home-modules;
+        users = lib.flakes.enumeratePackage ./users;
+        secrets = lib.filesystem.enumerateFiles ./secrets;
+
+        nixosConfigurations = lib.attrsets.implode "-" hosts;
+        nixosModules = lib.attrsets.implode "/" modules;
+        homeModules = lib.attrsets.implode "/" home-modules;
       };
 
-      perSystem = {
-        config,
-        pkgs,
-        lib,
-        system,
-        ...
-      }: {
-        _module.args.pkgs = import nixpkgs {
-          inherit system;
-          overlays = [agenix.overlays.default caps2superesc.overlays.default];
-        };
-        devShells.default = pkgs.mkShell {
-          name = "dev";
-          packages = with pkgs; [
-            pkgs.agenix
-            home-manager
-            nixos-rebuild
-            gnumake
-          ];
-        };
+      perSystem = sysCtx @ {...}: {
+        devShells = flake.lib.flakes.importSubmodulesRecursive (inputs // sysCtx) ./shells;
       };
     };
 }
