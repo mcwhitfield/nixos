@@ -4,7 +4,7 @@ inputs @ {
   domain,
   ...
 }: let
-  inherit (builtins) attrNames toString;
+  inherit (builtins) attrNames attrValues toString;
   inherit (self.lib) mkOption;
   inherit (self.lib.attrsets) attrByPath mapAttrs mapAttrsToList recursiveUpdate setAttrByPath;
   inherit (self.lib.lists) findFirstIndex;
@@ -40,6 +40,7 @@ in {
           specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
         };
         finalConfig.config.imports = [
+          (attrValues self.nixosModules)
           {${domain}.hardware.nixos-container.enable = true;}
           submodule.config
         ];
