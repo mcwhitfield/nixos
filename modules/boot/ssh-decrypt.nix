@@ -76,8 +76,9 @@ in {
       mkSecret = path: {
         name = baseNameOf path;
         value = {
-          inherit path;
+          path = path;
           file = self.secrets.${baseNameOf path};
+          symlink = false;
         };
       };
     in

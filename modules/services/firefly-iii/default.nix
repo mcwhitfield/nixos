@@ -2,7 +2,6 @@
   self,
   config,
   domain,
-  dockerhub,
   ...
 }: let
   inherit (builtins) elemAt split toString;
@@ -255,7 +254,6 @@ in {
           ];
         };
       };
-      firewall.interfaces."podman+".allowedUDPPorts = [53];
       systemd.services = {
         podman-firefly-iii-importer.serviceConfig.TimeoutStopSec = mkForce 5;
       };
