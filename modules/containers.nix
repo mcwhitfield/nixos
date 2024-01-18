@@ -39,7 +39,7 @@ in {
           bindMounts.${persistRoot name}.isReadOnly = false;
           specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
         };
-        finalConfig.config.imports = [
+        finalConfig.config.imports = self.lib.flatten [
           (attrValues self.nixosModules)
           {${domain}.hardware.nixos-container.enable = true;}
           submodule.config

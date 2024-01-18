@@ -6,7 +6,7 @@
 }: let
   inherit (self.lib) mkIf mkOption types;
   inherit (self.lib.attrsets) attrByPath setAttrByPath;
-  configKey = [domain "hardware" "nixos-contaienr"];
+  configKey = [domain "hardware" "nixos-container"];
   cfg = attrByPath configKey {} config;
 in {
   options = setAttrByPath configKey {
