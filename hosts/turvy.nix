@@ -15,7 +15,5 @@
       hyprland.enable = true;
       defaultSession = "hyprland";
     };
-    users.mark.enable = true;
-    users.mark.enableHomeManager = true;
   };
 }

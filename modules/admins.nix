@@ -5,12 +5,24 @@
   config,
   ...
 }: let
-  inherit (builtins) attrNames attrValues concatMap map readFile;
-  inherit (self.lib) mkOption types;
+  inherit (builtins) attrNames attrValues concatMap map readFile zipAttrsWith;
+  inherit (self.lib) mkOption types zipListsWith;
   inherit (self.lib.attrsets) attrByPath catAttrs filterAttrs genAttrs setAttrByPath;
 
   configKey = [domain "admins"];
   cfg = attrByPath configKey {} config;
+
+  mergeLikeUserSubmodule = loc: defs: let
+    files = catAttrs "file" defs;
+    vals = catAttrs "value" defs;
+    userOpts = options.users.users.type.getSubOptions [];
+    userMerge = opt: vals': let
+      loc' = loc ++ [opt];
+      defs' = zipListsWith (file: value: {inherit file value;}) files vals';
+    in
+      userOpts.${opt}.type.merge loc' defs';
+  in
+    zipAttrsWith userMerge vals;
 in {
   options = setAttrByPath configKey {
     admins = mkOption {
@@ -91,14 +103,15 @@ in {
         filterAttrs (user: _: cfg.admins ? ${builtins.unsafeDiscardStringContext user})
         config.users.users;
     };
-    extraGroups = mkOption {
-      type = types.listOf types.str;
+    extraSettings = mkOption {
+      type = types.attrs // {merge = mergeLikeUserSubmodule;};
       description = ''
-        A set of groups that all admins will be members of on this system.
+        Same options as config.users.users.<name>, but with definitions applied to all admin users.
       '';
-      default = ["wheel"];
+      default = {};
     };
   };
 
-  config.users.users = genAttrs (attrNames cfg.admins) (_: {extraGroups = cfg.extraGroups;});
+  config.${domain}.admins.extraSettings.extraGroups = ["wheel"];
+  config.users.users = genAttrs (attrNames cfg.admins) (_: cfg.extraSettings);
 }

@@ -9,9 +9,13 @@
   persistRoot = "/persist/home/mark";
 in {
   options.${domain}.users.mark = {
-    enable = self.lib.mkEnableOption ''
-      Enable the user `mark` on the system.
-    '';
+    enable = self.lib.mkOption {
+      type = self.lib.types.bool;
+      default = true;
+      description = ''
+        Enable the user `mark` on the system.
+      '';
+    };
     enableHomeManager = self.lib.mkOption {
       type = self.lib.types.bool;
       default = cfg.enable;

@@ -60,5 +60,6 @@ in {
         kernelModules = ["broadcom" "genet"];
       };
     };
+    networking.hostName = "rpi-${toString cfg.cluster}-${toString cfg.node}";
   };
 }

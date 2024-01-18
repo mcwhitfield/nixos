@@ -6,22 +6,21 @@
 }: let
   inherit (self.lib) mkIf mkOption types;
   inherit (self.lib.attrsets) attrByPath setAttrByPath;
-  configKey = [domain "podman"];
+  configKey = [domain "wireshark"];
   cfg = attrByPath configKey {} config;
 in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = config.virtualisation.oci-containers.containers != {};
+      default = true;
       description = ''
-        Enable common Podman configuration for hosts on ${domain}.
+        Install and configure the Wireshark program on the host.
       '';
     };
   };
 
   config = mkIf (cfg.enable) {
-    ${domain}.admins.extraGroups = ["podman"];
-    firewall.interfaces."podman+".allowedUDPPorts = [53];
-    virtualisation.oci-containers.backend = "podman";
+    ${domain}.admins.extraSettings.extraGroups = ["wireshark"];
+    programs.wireshark.enable = true;
   };
 }

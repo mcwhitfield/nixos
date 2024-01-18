@@ -22,7 +22,7 @@ in {
 
   config = mkIf (cfg.enable) {
     ${domain} = {
-      admins.extraGroups = ["networkmanager"];
+      admins.extraSettings.extraGroups = ["networkmanager"];
       persist.directories = ["/etc/NetworkManager/system-connections"];
     };
     environment.systemPackages = [pkgs.wirelesstools];
