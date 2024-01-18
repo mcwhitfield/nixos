@@ -13,7 +13,7 @@ in {
   options = setAttrByPath configKey {
     enable = mkOption {
       type = types.bool;
-      default = !config.${domain}.workstation.enable;
+      default = !(config.${domain}.workstation.enable || config.boot.isContainer);
       description = ''
         Ship an SSH daemon in the initramfs to allow remote decryption of boot drives.
       '';

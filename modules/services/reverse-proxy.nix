@@ -2,7 +2,6 @@
   self,
   config,
   domain,
-  tailnet,
   ...
 }: let
   inherit (builtins) any attrValues;
@@ -59,7 +58,7 @@ in {
 
   config = mkIf (cfg.enable) {
     services.caddy = let
-      subdomain = "${cfg.hostName}.${tailnet}";
+      subdomain = "${cfg.hostName}.${config.${domain}.networking.tailscale.tailnet}";
       upstream =
         if (cfg.upstream.port != null)
         then "http://localhost:${toString cfg.upstream.port}"
