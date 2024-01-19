@@ -49,7 +49,7 @@ in {
     hostKeys = mkOption {
       type = types.listOf types.str;
       default = let
-        key = algo: "/etc/ssh/ssh-host-${config.networking.hostName}-initrd-${algo}";
+        key = algo: "/etc/ssh/ssh-host-${config.networking.hostName}-initrd_${algo}";
       in [(key "rsa") (key "ed25519")];
       description = ''
         Synonym of boot.initrd.network.ssh.hostKeys with better defaults.

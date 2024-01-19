@@ -11,18 +11,12 @@ let
   in
     filter (gs: !(isNull gs)) tries;
 
-  pubkeyMatches = secretsMatching "ssh-(user|host)-(.*)-(initrd-)?([^-]*)\.pub";
+  pubkeyMatches = secretsMatching "ssh-(user|host)-(.*)-([^-]*)\.pub";
   ownerType = groups: elemAt groups 0;
   userOrHost = groups: elemAt groups 1;
-  initrd = groups: let
-    maybeInitrd = elemAt groups 2;
-  in
-    if (isNull maybeInitrd)
-    then ""
-    else maybeInitrd;
-  label = groups: elemAt groups 3;
+  label = groups: elemAt groups 2;
   readKey = groups: let
-    original = "ssh-${ownerType groups}-${userOrHost groups}-${initrd groups}${label groups}";
+    original = "ssh-${ownerType groups}-${userOrHost groups}-${label groups}";
     content = readFile ./secrets/${original}.pub;
   in
     replaceStrings ["\n"] [""] content;
@@ -34,7 +28,7 @@ let
       owner = userOrHost groups;
     in {
       name = "secrets/ssh-${ownerType groups}-${owner}-${label groups}";
-      value.publicKeys = keys.${owner};
+      value = {publicKeys = keys.${owner};};
     };
   in
     listToAttrs (map mkKv pubkeyMatches);
