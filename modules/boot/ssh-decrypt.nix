@@ -90,7 +90,7 @@ in {
       network = {
         enable = true;
         ssh = {
-          inherit (cfg) enable port hostKeys authorizedKeys;
+          # inherit (cfg) enable port hostKeys authorizedKeys;
         };
         postCommands = cfg.command;
       };
