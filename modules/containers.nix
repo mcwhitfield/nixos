@@ -41,7 +41,6 @@ in {
         };
         finalConfig.config.imports = self.lib.flatten [
           (attrValues self.nixosModules)
-          self.lib.flakes.userModules
           {${domain}.hardware.nixos-container.enable = true;}
           submodule.config
         ];

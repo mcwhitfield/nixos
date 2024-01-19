@@ -12,7 +12,7 @@ $(hosts): %: .update-git-%
 		switch
 
 .update-git-%: .build-%
-	git commit; git push -f
+	git commit; git push
 
 .build-%:
 	git add .

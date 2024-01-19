@@ -141,7 +141,7 @@ in {
         inherit (cfg) directories files;
       };
 
-      fileSystems = systemConf // userConfs // containerConfs;
+      fileSystems = mkIf (!config.boot.isContainer) (systemConf // userConfs // containerConfs);
 
       # https://github.com/nix-community/impermanence/issues/101
       services.openssh = {inherit (cfg) hostKeys;};

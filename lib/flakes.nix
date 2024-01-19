@@ -2,7 +2,7 @@
   inherit (builtins) attrValues filter toString;
   inherit (self) lib;
   inherit (lib) nixosSystem path strings;
-  inherit (lib.attrsets) catAttrs explode genNames mapAttrsRecursive;
+  inherit (lib.attrsets) explode genNames mapAttrsRecursive;
   inherit (lib.filesystem) listFilesRecursive;
   inherit (lib.operators) addPrefix;
   inherit (lib.strings) hasSuffix removeSuffix;
@@ -10,18 +10,12 @@
 in rec {
   importWithContext = flip import;
   importSubmodulesRecursive = ctx: dir: mapSubmodulesRecursive (importWithContext ctx) dir;
-  userModules = pipe self.users [
-    ((flip removeAttrs) ["default"])
-    attrValues
-    (catAttrs "nixos")
-  ];
   importNixosConfigsRecursive = ctx @ {self, ...}: let
     mkConf = m:
       nixosSystem {
         modules =
           [m]
-          ++ (attrValues self.nixosModules)
-          ++ userModules;
+          ++ (attrValues self.nixosModules);
         # `domain` in particular should be accessible as a top-level module arg since we use it
         # everywhere. Cuts way down on line noise.
         specialArgs = ctx // {inherit (self) domain;};

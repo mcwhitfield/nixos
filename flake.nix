@@ -53,7 +53,11 @@
         secrets = lib.filesystem.enumerateFiles ./secrets;
 
         nixosConfigurations = lib.attrsets.implode "-" hosts;
-        nixosModules = lib.attrsets.implode "/" modules;
+        nixosModules = let
+          flattenedModules = lib.attrsets.implode "/" modules;
+          userModules = lib.attrsets.mapValues (cfgs: cfgs.nixos) users;
+        in
+          flattenedModules // userModules;
         homeModules = lib.attrsets.implode "/" home-modules;
       };
 
