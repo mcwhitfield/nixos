@@ -71,7 +71,6 @@ in {
   };
 
   config = mkIf (cfg.enable) {
-    ${domain}.persist.files = cfg.hostKeys ++ (map (key: "${key}.pub") cfg.hostKeys);
     age.secrets = let
       mkSecret = path: {
         name = baseNameOf path;
