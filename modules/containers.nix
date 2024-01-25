@@ -38,7 +38,6 @@ in {
           localAddress6 = "fc00::${toString localIdx}";
 
           bindMounts.${persistRoot name}.isReadOnly = false;
-          bindMounts.${persistMounts.users}.isReadOnly = false;
           specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
         };
         finalConfig.config.imports = self.lib.flatten [
