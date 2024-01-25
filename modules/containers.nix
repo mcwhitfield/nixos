@@ -9,8 +9,9 @@ inputs @ {
   inherit (self.lib.attrsets) attrByPath mapAttrs mapAttrsToList recursiveUpdate setAttrByPath;
   inherit (self.lib.lists) findFirstIndex;
   configKey = [domain "containers"];
+  persistMounts = config.${domain}.persist.mounts;
   cfg = attrByPath configKey {} config;
-  persistRoot = name: "${config.${domain}.persist.mounts.root}/containers/${name}";
+  persistRoot = name: "${persistMounts.containers}/${name}";
 in {
   options = setAttrByPath configKey (mkOption {
     default = {};
@@ -37,6 +38,7 @@ in {
           localAddress6 = "fc00::${toString localIdx}";
 
           bindMounts.${persistRoot name}.isReadOnly = false;
+          bindMounts.${persistMounts.users}.isReadOnly = false;
           specialArgs = removeAttrs inputs ["config" "lib" "pkgs"];
         };
         finalConfig.config.imports = self.lib.flatten [
