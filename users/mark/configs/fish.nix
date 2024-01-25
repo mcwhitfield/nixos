@@ -1,6 +1,7 @@
 {
   self,
   config,
+  pkgs,
   fps,
   ...
 }: let
@@ -18,11 +19,15 @@ in {
     # https://discourse.nixos.org/t/how-to-specify-programs-sqlite-for-command-not-found-from-flakes/22722
     fps.nixosModules.programs-sqlite
   ];
+  home.packages = [pkgs.neofetch];
   programs.carapace.enable = true;
   programs.command-not-found.enable = true;
   programs.fish = {
     enable = true;
-    interactiveShellInit = envVars;
+    interactiveShellInit = ''
+      ${envVars}
+      neofetch
+    '';
     shellAliases = {
       hms = "home-manager switch";
       nhs = "home-manager switch";
