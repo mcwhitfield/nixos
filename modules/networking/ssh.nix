@@ -20,7 +20,10 @@ in {
   };
 
   config = mkIf (cfg.enable) {
-    security.pam.enableSSHAgentAuth = true;
+    security.pam.sshAgentAuth = {
+      enable = true;
+      authorizedKeysFiles = map toString config.${domain}.admins.publicKeys.paths;
+    };
     programs.ssh.startAgent = true;
     services.openssh = {
       enable = true;
