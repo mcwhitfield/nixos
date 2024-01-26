@@ -39,6 +39,7 @@ in {
         "${homeDir}/.gnupg"
         "${homeDir}/.ssh"
         "${dataHome}/keyrings"
+        "${dataHome}/Steam" # TODO: sux
         "${configHome}/heroic"
       ];
     };

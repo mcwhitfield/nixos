@@ -8,6 +8,7 @@
     boot.systemd-boot.enable = true;
     disko.disk = "/dev/disk/by-id/nvme-WDS200T1X0E-00AFY0_21213D800491";
     hardware.framework-12.enable = true;
+    steam.enable = true;
     workstation = {
       enable = true;
       gnome.enable = true;
