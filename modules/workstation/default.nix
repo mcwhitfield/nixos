@@ -42,8 +42,10 @@ in {
       printing.enable = true;
       xserver = {
         enable = true;
-        layout = "us";
-        xkbVariant = "";
+        xkb = {
+          variant = "";
+          layout = "us";
+        };
         displayManager.defaultSession = cfg.defaultSession;
       };
     };

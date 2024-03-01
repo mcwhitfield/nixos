@@ -18,7 +18,7 @@
           repo = "wezterm";
           rev = wezterm.rev;
           fetchSubmodules = true;
-          hash = "sha256-hhAGDnBE0cPtaKhWf8JXeMZVjyRpp79AzYQFRuygO8c=";
+          hash = "sha256-EQb0gNAb98e4IFwBv5XODtq9Er519wM/h5EglD8Lrhc=";
         };
         cargoLock = {
           lockFile = "${wezterm}/Cargo.lock";
