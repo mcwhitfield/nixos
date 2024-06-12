@@ -4,6 +4,7 @@ return {
   color_scheme = 'tokyonight',
   default_prog = { 'fish' },
   enable_tab_bar = false,
+  enable_wayland = false,
   font = wezterm.font 'Fira Code',
   harfbuzz_features = {
     'cv01', -- 'a'

@@ -29,9 +29,23 @@ in {
     ${domain} = {
       networking.wifi.enable = true;
     };
-    environment.systemPackages = with pkgs; [pulseaudio];
+    environment.systemPackages = with pkgs; [pulseaudio libsForQt5.kmix pasystray];
     hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;
+    security.pam.loginLimits = [
+      {
+        domain = "*";
+        type = "hard";
+        item = "nofile";
+        value = "1048576";
+      }
+      {
+        domain = "*";
+        type = "soft";
+        item = "nofile";
+        value = "1048576";
+      }
+    ];
     services = {
       pipewire = {
         enable = true;

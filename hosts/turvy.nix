@@ -3,6 +3,8 @@
   networking.hostId = "30ef06a8";
   nixpkgs.hostPlatform = "x86_64-linux";
   hardware.flipperzero.enable = true;
+  hardware.xpadneo.enable = true;
+  services.blueman.enable = true;
   services.cpupower-gui.enable = true;
   services.thermald.enable = true;
 
@@ -18,5 +20,6 @@
       hyprland.enable = true;
       defaultSession = "hyprland";
     };
+    utils.enable = false;
   };
 }
