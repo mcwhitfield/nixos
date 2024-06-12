@@ -21,6 +21,7 @@ in {
   };
 
   config = mkIf (cfg.enable) {
+    hardware.xone.enable = true;
     programs.steam = {
       enable = true;
       gamescopeSession.enable = true;
@@ -44,6 +45,7 @@ in {
       builtins.elem (getName pkg) [
         "steam"
         "steam-original"
+        "xow_dongle-firmware"
         "steam-run"
       ];
   };
