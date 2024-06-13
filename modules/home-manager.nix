@@ -27,6 +27,7 @@ in {
 
   config = mkIf (cfg.enable) {
     home-manager = {
+      backupFileExtension = "bak";
       useGlobalPkgs = true;
       useUserPackages = true;
       extraSpecialArgs = builtins.removeAttrs inputs ["config" "options" "lib"];
