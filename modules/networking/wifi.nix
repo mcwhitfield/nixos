@@ -2,6 +2,7 @@
   self,
   pkgs,
   config,
+  lib,
   domain,
   ...
 }: let
@@ -27,5 +28,6 @@ in {
     };
     environment.systemPackages = [pkgs.wirelesstools];
     networking.networkmanager.enable = true;
+    systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
   };
 }
