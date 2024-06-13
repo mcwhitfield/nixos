@@ -47,6 +47,7 @@ in {
       }
     ];
     services = {
+      displayManager.defaultSession = cfg.defaultSession;
       pipewire = {
         enable = true;
         alsa.enable = true;
@@ -60,7 +61,6 @@ in {
           variant = "";
           layout = "us";
         };
-        displayManager.defaultSession = cfg.defaultSession;
       };
     };
     sound.enable = true;

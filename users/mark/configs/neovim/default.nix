@@ -74,7 +74,7 @@
       nil
       nixd
       ripgrep
-      rnix-lsp
+      #rnix-lsp
       tree-sitter
       wl-clipboard
     ];
