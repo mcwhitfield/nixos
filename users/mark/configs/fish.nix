@@ -63,6 +63,17 @@ in {
           cd (flake_path $flake) && nix develop -c fish
         '';
       };
+      unlock = {
+        argumentNames = ["host"];
+        description = ''
+          Unlock the disk of the specified host (with ssh-decrypt module enabled) to complete the
+          boot process remotely.
+        '';
+        wraps = "ssh";
+        body = ''
+          ssh -p 2222 root@$host
+        '';
+      };
     };
   };
 }
