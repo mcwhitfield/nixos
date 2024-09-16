@@ -1,7 +1,6 @@
 {
   self,
   config,
-  admin,
   domain,
   ...
 }: let
@@ -52,7 +51,7 @@ in {
 
         services.gitlab = {
           enable = true;
-          initialRootEmail = admin;
+          initialRootEmail = "mark@${domain}";
           databasePasswordFile = config.age.secrets."gitlab-db-pass".path;
           initialRootPasswordFile = config.age.secrets."gitlab-root-pass".path;
           secrets = {

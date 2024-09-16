@@ -22,7 +22,6 @@ in {
 
   config = mkIf (cfg.enable) {
     home.persistDirs = [config.programs.gpg.homedir];
-    home.packages = [pkgs.pinentry-qt];
     programs.gpg = {
       enable = true;
       homedir = "${config.xdg.configHome}/gnupg";
@@ -39,7 +38,7 @@ in {
       enable = true;
       enableFishIntegration = true;
       enableSshSupport = true;
-      #pinentryFlavor = "qt";
+      pinentryPackage = pkgs.pinentry-qt;
       sshKeys = ["58794282C1DB5CE484DC83336CDC1065109E9D2B"];
     };
   };

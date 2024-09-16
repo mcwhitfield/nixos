@@ -1,17 +1,5 @@
 return {
   {
-    -- not working
-    "folke/neodev.nvim",
-    opts = {
-      override = function(_, library)
-        library.enabled = true
-        library.runtime = true
-        library.types = true
-        library.plugins = true
-      end,
-    }
-  },
-  {
     "stevearc/conform.nvim",
     opts = { formatters_by_ft = { nix = { "alejandra" } } },
   },

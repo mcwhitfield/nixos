@@ -7,7 +7,7 @@
       cluster = 0;
       node = 0;
     };
-    services.vaultwarden.enable = true;
+    services.vaultwarden.enable = false;
     users.mark.enable = true;
   };
 }

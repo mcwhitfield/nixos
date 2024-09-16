@@ -61,8 +61,8 @@ in {
     security.pam = {
       u2f = {
         enable = true;
-        authFile = "/etc/${cfg.u2f.path}";
-        cue = true;
+        settings.authFile = "/etc/${cfg.u2f.path}";
+        settings.cue = true;
       };
       services = {
         login.u2fAuth = false;

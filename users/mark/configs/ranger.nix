@@ -17,7 +17,7 @@
       mediainfo
       poppler_utils
       ranger
-      transmission-gtk
+      transmission_3-gtk
       w3m
     ];
   };

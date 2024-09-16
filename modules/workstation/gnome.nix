@@ -25,15 +25,15 @@ in {
       gnome.excludePackages = with pkgs; [
         gnome-photos
         gnome-tour
-        gnome.cheese
+        cheese
         gnome.gnome-music
-        gnome.gnome-terminal
+        gnome-terminal
         gedit
-        gnome.epiphany
-        gnome.geary
-        gnome.evince
+        epiphany
+        geary
+        evince
         gnome.gnome-characters
-        gnome.totem
+        totem
         gnome.tali
         gnome.iagno
         gnome.hitori
@@ -41,8 +41,8 @@ in {
       ];
 
       systemPackages = with pkgs; [
-        gnome.adwaita-icon-theme
-        gnome.gnome-tweaks
+        adwaita-icon-theme
+        gnome-tweaks
       ];
     };
 

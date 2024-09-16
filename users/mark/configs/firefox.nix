@@ -52,18 +52,6 @@ in {
           }
         ];
 
-        containers = {
-          Default = {
-            id = 0;
-            color = "toolbar";
-          };
-          "Google Account" = {
-            id = 1;
-            color = "blue";
-            icon = "briefcase";
-          };
-        };
-
         id = 0;
 
         name = "Mark Whitfield";
