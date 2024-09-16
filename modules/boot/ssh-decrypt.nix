@@ -18,6 +18,14 @@ in {
         Ship an SSH daemon in the initramfs to allow remote decryption of boot drives.
       '';
     };
+    secretsOnly = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Attempt a workaround for https://github.com/ryantm/agenix/issues/193. When changing
+        keys, build once with this enabled, then disable.
+      '';
+    };
     port = mkOption {
       type = types.port;
       default = 2222;
@@ -70,29 +78,32 @@ in {
     };
   };
 
-  config = mkIf (cfg.enable) {
-    age.secrets = let
-      mkSecret = path: {
-        name = baseNameOf path;
-        value = {
-          path = path;
-          file = self.secrets.${baseNameOf path};
-          symlink = false;
+  config =
+    mkIf (cfg.enable) {
+      age.secrets = let
+        mkSecret = path: {
+          name = baseNameOf path;
+          value = {
+            path = path;
+            file = self.secrets.${baseNameOf path};
+            symlink = false;
+          };
         };
-      };
-    in
-      mapToAttrs mkSecret cfg.hostKeys;
-    boot.initrd = {
-      # This is stage 1 boot so we don't have any fancy way to be sure the network interface is
-      # ready yet, so just inject a small delay to reduce issues.
-      preLVMCommands = "sleep 1";
-      network = {
-        enable = true;
-        ssh = {
-          inherit (cfg) enable port hostKeys authorizedKeys;
+      in
+        mapToAttrs mkSecret cfg.hostKeys;
+    }
+    // mkIf (cfg.enable && !cfg.secretsOnly) {
+      boot.initrd = {
+        # This is stage 1 boot so we don't have any fancy way to be sure the network interface is
+        # ready yet, so just inject a small delay to reduce issues.
+        preLVMCommands = "sleep 1";
+        network = {
+          enable = true;
+          ssh = {
+            inherit (cfg) enable port hostKeys authorizedKeys;
+          };
+          postCommands = cfg.command;
         };
-        postCommands = cfg.command;
       };
     };
-  };
 }
