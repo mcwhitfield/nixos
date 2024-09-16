@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (builtins) baseNameOf;
-  inherit (self.lib) mkIf mkOption types;
+  inherit (self.lib) mkIf mkMerge mkOption types;
   inherit (self.lib.attrsets) attrByPath mapToAttrs setAttrByPath;
   configKey = [domain "boot" "ssh-decrypt"];
   cfg = attrByPath configKey {} config;
@@ -78,8 +78,8 @@ in {
     };
   };
 
-  config =
-    mkIf (cfg.enable) {
+  config = mkIf (cfg.enable) (mkMerge [
+    {
       age.secrets = let
         mkSecret = path: {
           name = baseNameOf path;
@@ -92,7 +92,7 @@ in {
       in
         mapToAttrs mkSecret cfg.hostKeys;
     }
-    // mkIf (cfg.enable && !cfg.secretsOnly) {
+    (mkIf (cfg.enable && !cfg.secretsOnly) {
       boot.initrd = {
         # This is stage 1 boot so we don't have any fancy way to be sure the network interface is
         # ready yet, so just inject a small delay to reduce issues.
@@ -105,5 +105,6 @@ in {
           postCommands = cfg.command;
         };
       };
-    };
+    })
+  ]);
 }
