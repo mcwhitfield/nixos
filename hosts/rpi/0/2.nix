@@ -9,6 +9,5 @@
       node = 2;
     };
     users.mark.enable = true;
-    services.vaultwarden.enable = true;
   };
 }
