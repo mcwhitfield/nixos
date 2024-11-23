@@ -36,6 +36,7 @@ in {
         ranger
       ];
       persistDirs = with config.xdg; [
+        "${homeDir}/.factorio"
         "${homeDir}/.gnupg"
         "${homeDir}/.ssh"
         "${dataHome}/keyrings"
