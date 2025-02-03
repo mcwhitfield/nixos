@@ -3,15 +3,15 @@
   domain,
   config,
   osConfig,
-  wallpapers,
+  # wallpapers,
   ...
 }: {
   config = self.lib.mkIf (osConfig.${domain}.workstation.enable) {
     programs.wpaperd = {
-      enable = true;
+      enable = false;
       settings = {
         default = {
-          path = "${wallpapers}/wallpapers/";
+          #  path = "${wallpapers}/wallpapers/";
           duration = "30m";
         };
       };

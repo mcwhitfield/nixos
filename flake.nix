@@ -15,7 +15,7 @@
     nixosHardware.url = "github:nixos/nixos-hardware";
     nur.url = "github:nix-community/nur";
     tokyonight.url = "github:stronk-dev/Tokyo-Night-Linux";
-    wallpapers.url = "github:makccr/wallpapers";
+    # wallpapers.url = "github:makccr/wallpapers";
     wezterm.url = "github:wez/wezterm?submodules=1";
 
     agenix.inputs.nixpkgs.follows = "nixpkgs";
@@ -27,7 +27,7 @@
     nixosGenerators.inputs.nixpkgs.follows = "nixpkgs";
 
     tokyonight.flake = false;
-    wallpapers.flake = false;
+    # wallpapers.flake = false;
     wezterm.flake = false;
   };
 

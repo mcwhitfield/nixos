@@ -21,7 +21,7 @@
   configDir = "${config.home.homeDirectory}/.mozilla";
 in {
   imports = [
-    nur.hmModules.nur
+    nur.modules.homeManager.default
   ];
   config = mkIf (osConfig.${domain}.workstation.enable) {
     home.persistDirs = [configDir];

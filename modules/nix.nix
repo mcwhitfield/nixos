@@ -25,7 +25,7 @@ in {
     nix = {
       channel.enable = false;
       extraOptions = ''
-        experimental-features = nix-command flakes repl-flake
+        experimental-features = nix-command flakes
       '';
       gc = {
         automatic = true;
@@ -36,7 +36,7 @@ in {
         type = "path";
         path = pkgs.path;
       };
-      package = pkgs.nixFlakes;
+      package = pkgs.nixVersions.stable;
       settings = rec {
         allowed-users = ["@wheel"];
         auto-optimise-store = true;

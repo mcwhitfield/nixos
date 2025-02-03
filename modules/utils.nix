@@ -23,7 +23,7 @@ in {
   config = mkIf (cfg.enable) {
     boot.initrd.systemd.initrdBin = [pkgs.busybox];
     environment.systemPackages = with pkgs; [
-      busybox
+      # isd
       lshw
     ];
   };
