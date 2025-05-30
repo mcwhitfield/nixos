@@ -9,15 +9,15 @@
 }: let
   inherit (self.lib) mkIf;
   inherit (config.lib.file) mkOutOfStoreSymlink;
-  extensions = with config.nur.repos.rycee.firefox-addons; {
-    "{446900e4-71c2-419f-a6a7-df9c091e268b}" = bitwarden;
-    "{74145f27-f039-47ce-a470-a662b129930a}" = clearurls;
-    "addon@darkreader.org" = darkreader;
-    "jid1-BoFifL9Vbdl2zQ@jetpack" = decentraleyes;
-    "jid1-MnnxcxisBPnSXQ@jetpack" = privacy-badger;
-    "uBlock0@raymondhill.net" = ublock-origin;
-    "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = vimium;
-  };
+  # extensions = with pkgs.nur.repos.rycee.firefox-addons; {
+  # "{446900e4-71c2-419f-a6a7-df9c091e268b}" = bitwarden;
+  # "{74145f27-f039-47ce-a470-a662b129930a}" = clearurls;
+  # "addon@darkreader.org" = darkreader;
+  # "jid1-BoFifL9Vbdl2zQ@jetpack" = decentraleyes;
+  # "jid1-MnnxcxisBPnSXQ@jetpack" = privacy-badger;
+  # "uBlock0@raymondhill.net" = ublock-origin;
+  #  "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = vimium;
+  # };
   configDir = "${config.home.homeDirectory}/.mozilla";
 in {
   imports = [
@@ -56,7 +56,7 @@ in {
 
         name = "Mark Whitfield";
 
-        extensions = builtins.attrValues extensions;
+        # extensions = builtins.attrValues extensions;
 
         search = {
           default = "DuckDuckGo";

@@ -16,8 +16,8 @@
       enable = true;
       gnome.enable = true;
       gdm.enable = true;
-      hyprland.enable = true;
-      defaultSession = "hyprland";
+      hyprland.enable = false;
+      defaultSession = "gnome";
     };
     utils.enable = false;
   };

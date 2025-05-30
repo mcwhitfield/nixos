@@ -26,18 +26,18 @@ in {
         gnome-photos
         gnome-tour
         cheese
-        gnome.gnome-music
+        gnome-music
         gnome-terminal
         gedit
         epiphany
         geary
         evince
-        gnome.gnome-characters
+        gnome-characters
         totem
-        gnome.tali
-        gnome.iagno
-        gnome.hitori
-        gnome.atomix
+        tali
+        iagno
+        hitori
+        atomix
       ];
 
       systemPackages = with pkgs; [

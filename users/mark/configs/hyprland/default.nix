@@ -40,7 +40,7 @@ in {
         polkit-kde-agent
         qt5.qtwayland
       ])
-      xdg-desktop-portal-hyprland
+      # xdg-desktop-portal-hyprland
     ]);
     programs = {
       wofi.enable = true;

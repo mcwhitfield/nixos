@@ -66,7 +66,6 @@ in {
             gpg
             haskell
             html
-            ini
             java
             javascript
             jq

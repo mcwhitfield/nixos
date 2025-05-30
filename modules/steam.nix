@@ -45,6 +45,7 @@ in {
       builtins.elem (getName pkg) [
         "steam"
         "steam-original"
+        "steam-unwrapped"
         "xow_dongle-firmware"
         "steam-run"
       ];

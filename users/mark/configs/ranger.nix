@@ -7,7 +7,6 @@
 }: {
   config = self.lib.mkIf (osConfig.${domain}.workstation.enable) {
     home.packages = with pkgs; [
-      drawio
       ffmpegthumbnailer
       fontforge-gtk
       gnutar
