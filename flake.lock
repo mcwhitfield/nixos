@@ -351,19 +351,19 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1748611559,
-        "narHash": "sha256-ceGko/Zkw8hspR4A/ZLdPD7lv7wQ+qoQwj2R6QMCIkg=",
+        "lastModified": 1748645134,
+        "narHash": "sha256-1YltR+i6l+UpGbkk6OzltMyolxKgAx58HtKgFVm9RVk=",
         "ref": "refs/heads/main",
-        "rev": "9190443d951c21ab24201d033accf90b4d172f46",
-        "revCount": 6149,
+        "rev": "af2fdb5d58f5d3017aafd78a8ddafb40f710e34b",
+        "revCount": 6150,
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/hyprwm/Hyprland?tag=v0.45.2"
+        "url": "https://github.com/hyprwm/Hyprland"
       },
       "original": {
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/hyprwm/Hyprland?tag=v0.45.2"
+        "url": "https://github.com/hyprwm/Hyprland"
       }
     },
     "hyprland-protocols": {
@@ -606,16 +606,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1748524170,
-        "narHash": "sha256-+wVonXVXyeTiTTfrn5HUAxEup1veUSjUa8emzpIWlsQ=",
+        "lastModified": 1748460289,
+        "narHash": "sha256-7doLyJBzCllvqX4gszYtmZUToxKvMUrg45EUWaUYmBg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d7ab34445a9e77bc0efa9f38d144c6d7ec04e197",
+        "rev": "96ec055edbe5ee227f28cdbc3f1ddf1df5965102",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "release-24.11",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }

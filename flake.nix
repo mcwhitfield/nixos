@@ -8,9 +8,9 @@
     flakeParts.url = "github:hercules-ci/flake-parts";
     fps.url = "github:wamserma/flake-programs-sqlite";
     home-manager.url = "github:nix-community/home-manager";
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1&tag=v0.45.2";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     impermanence.url = "github:nix-community/impermanence";
-    nixpkgs.url = "github:nixos/nixpkgs/release-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixosGenerators.url = "github:nix-community/nixos-generators";
     nixosHardware.url = "github:nixos/nixos-hardware";
     nur.url = "github:nix-community/nur";

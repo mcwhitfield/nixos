@@ -18,7 +18,7 @@ in {
     };
     enableHomeManager = self.lib.mkOption {
       type = self.lib.types.bool;
-      default = false;
+      default = true;
       description = ''
         Enable home-manager and `mark`'s HM profile on the system.
       '';
