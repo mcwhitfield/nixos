@@ -22,6 +22,7 @@ in {
 
   config = mkIf (cfg.enable) {
     hardware.xone.enable = true;
+    hardware.xpadneo.enable = true;
     programs.steam = {
       enable = true;
       gamescopeSession.enable = true;
