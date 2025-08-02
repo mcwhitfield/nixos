@@ -29,7 +29,7 @@ in {
     ${domain} = {
       networking.wifi.enable = true;
     };
-    environment.systemPackages = with pkgs; [pulseaudio libsForQt5.kmix pasystray];
+    environment.systemPackages = with pkgs; [pulseaudio libsForQt5.kmix pasystray google-drive-ocamlfuse];
     hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;
     security.pam.loginLimits = [
