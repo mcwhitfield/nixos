@@ -49,6 +49,7 @@ in {
         "steam-unwrapped"
         "xow_dongle-firmware"
         "steam-run"
+        "zoom"
       ];
   };
 }

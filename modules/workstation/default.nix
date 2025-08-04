@@ -31,6 +31,7 @@ in {
     };
     environment.systemPackages = with pkgs; [pulseaudio libsForQt5.kmix pasystray google-drive-ocamlfuse texliveFull texmaker];
     hardware.pulseaudio.enable = false;
+    programs.zoom-us.enable = true;
     security.rtkit.enable = true;
     security.pam.loginLimits = [
       {
